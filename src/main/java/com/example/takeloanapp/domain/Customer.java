@@ -20,7 +20,10 @@ public class Customer {
     private String addressNumber;
     private String addressPostCode;
     private String addressCity;
+    private String peselNumber;
     private String nipNumber;
+    private String idType;
+    private String idNumber;
     private String eMail;
     private boolean isActive;
     private LocalDate registrationDate;
@@ -30,7 +33,7 @@ public class Customer {
     public Customer(){
     }
 
-    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String eMail) {
+    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String idType, String idNumber, String eMail) {
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
@@ -38,10 +41,12 @@ public class Customer {
         this.addressNumber = addressNumber;
         this.addressPostCode = addressPostCode;
         this.addressCity = addressCity;
+        this.idType = idType;
+        this.idNumber = idNumber;
         this.eMail = eMail;
     }
 
-    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String nipNumber, String eMail) {
+    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String nipNumber, String idType, String idNumber, String eMail) {
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
@@ -50,10 +55,12 @@ public class Customer {
         this.addressPostCode = addressPostCode;
         this.addressCity = addressCity;
         this.nipNumber = nipNumber;
+        this.idType = idType;
+        this.idNumber = idNumber;
         this.eMail = eMail;
     }
 
-    public Customer(Long id, String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String nipNumber, String eMail, boolean isActive, LocalDate registrationDate, LocalDate closedDate, List<Loans> loansList) {
+    public Customer(Long id, String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String nipNumber, String idType, String idNumber, String eMail, boolean isActive, LocalDate registrationDate, LocalDate closedDate, List<Loans> loansList) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -62,7 +69,10 @@ public class Customer {
         this.addressNumber = addressNumber;
         this.addressPostCode = addressPostCode;
         this.addressCity = addressCity;
+        this.peselNumber = peselNumber;
         this.nipNumber = nipNumber;
+        this.idType = idType;
+        this.idNumber = idNumber;
         this.eMail = eMail;
         this.isActive = isActive;
         this.registrationDate = registrationDate;
@@ -106,8 +116,20 @@ public class Customer {
         return addressCity;
     }
 
+    public String getPeselNumber() {
+        return peselNumber;
+    }
+
     public String getNipNumber() {
         return nipNumber;
+    }
+
+    public String getIdType() {
+        return idType;
+    }
+
+    public String getIdNumber() {
+        return idNumber;
     }
 
     public String getEmail() {
@@ -171,6 +193,14 @@ public class Customer {
         this.nipNumber = nipNumber;
     }
 
+    public void setIdType(String idType) {
+        this.idType = idType;
+    }
+
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
+    }
+
     public void setEmail(String eMail) {
         this.eMail = eMail;
     }
@@ -189,5 +219,13 @@ public class Customer {
 
     public void setLoansList(List<Loans> loansList) {
         this.loansList = loansList;
+    }
+
+    public void setPeselNumber(String peselNumber) {
+        this.peselNumber = peselNumber;
+    }
+
+    public void seteMail(String eMail) {
+        this.eMail = eMail;
     }
 }

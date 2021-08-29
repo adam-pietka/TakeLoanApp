@@ -22,7 +22,10 @@ public class CustomerDto {
     private String addressNumber;
     private String addressPostCode;
     private String addressCity;
+    private String peselNumber;
     private String nipNumber;
+    private String idType;
+    private String idNumber;
     private String eMail;
     private boolean isActive;
     private LocalDate registrationDate;
