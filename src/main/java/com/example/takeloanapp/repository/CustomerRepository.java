@@ -23,4 +23,8 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
     void deleteById(Customer id);
 
+    Optional<Customer> findByPeselNumber(String peselNumber);
+
+    Optional<Customer> findByIdNumber(String peselNumber);
+
 }

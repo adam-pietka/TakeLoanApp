@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -33,6 +33,8 @@ public class CustomerTestSuite {
         assertEquals(2, customerRepository.findAll().size());
 
         // clenup
+        customerRepository.deleteById(testCustomer01.getId());
+        customerRepository.deleteById(customerTest02.getId());
         customerRepository.deleteAll();
 
     }
@@ -50,5 +52,32 @@ public class CustomerTestSuite {
 
         // T
         assertEquals(customerList.size() - 1, customerListAfter.size() );
+    }
+
+    @Test
+    public void findCustomerById(){
+        // W
+         Customer customerTmp =  customerRepository.save(testCustomer01);
+          customerRepository.findById(customerTmp.getId());
+
+          assertTrue(customerRepository.findById(customerTmp.getId()).isPresent());
+
+
+        List<Customer> customerList = customerRepository.findAll();
+        System.out.println("All saved customer counter:" + customerRepository.findAll().size());
+
+        // G
+        customerRepository.deleteById(testCustomer01.getId());
+        List<Customer> customerListAfter = customerRepository.findAll();
+
+        // T
+        assertEquals(customerList.size() - 1, customerListAfter.size() );
+
+        // CLEAN UP
+        customerList.stream()
+                .forEach(e->customerRepository.deleteById(e.getId()));
+//                .forEach(o-> System.out.println( "cust: " + o.getId() + " name " +o.getName() ))
+
+
     }
 }

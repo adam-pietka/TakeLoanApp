@@ -42,7 +42,7 @@ public class CustomerMapper {
         );
     }
 
-    private CustomerDto mapToCustomerDto(Customer customer) {
+    public CustomerDto mapToCustomerDto(Customer customer) {
         return new CustomerDto(
                 customer.getId(),
                 customer.getName(),
