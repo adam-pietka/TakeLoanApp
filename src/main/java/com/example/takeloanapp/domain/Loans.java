@@ -6,6 +6,8 @@ import com.sun.istack.NotNull;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table
@@ -245,4 +247,5 @@ public class Loans {
     public void setClosed(boolean closed) {
         isClosed = closed;
     }
+
 }

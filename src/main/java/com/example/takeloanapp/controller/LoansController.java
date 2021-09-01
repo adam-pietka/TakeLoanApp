@@ -1,9 +1,16 @@
 package com.example.takeloanapp.controller;
 
 import com.example.takeloanapp.controller.exception.CustomerNotFoundException;
+import com.example.takeloanapp.controller.exception.LoanNotFoundException;
+import com.example.takeloanapp.domain.Customer;
+import com.example.takeloanapp.domain.Loans;
 import com.example.takeloanapp.domain.dto.CustomerDto;
+import com.example.takeloanapp.domain.dto.LoansDto;
 import com.example.takeloanapp.mapper.CustomerMapper;
+import com.example.takeloanapp.mapper.LoansMapper;
+import com.example.takeloanapp.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -12,102 +19,54 @@ import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/takeLoan/loan")
+@RequestMapping("/takeLoan/loans")
 public class LoansController {
 
     @Autowired
     private CustomerMapper customerMapper;
 
-    @GetMapping(value = "findLoan")
-    public CustomerDto getCustomer(@RequestParam Long customerId) throws CustomerNotFoundException {
+    @Autowired
+    private LoansMapper loansMapper;
 
-        List<Long> loansListTMP = new ArrayList<>();
-        return new CustomerDto(
-                1L,
-                "name",
-                "surname",
-                "+48 558585",
-                "street JAVA",
-                "858/55",
-                "00-855",
-                "City",
-                "pesel 8585858",
-                "NIP 858-965",
-                "passport",
-                "pass85858",
-                "mail@sds",
-                true,
-                LocalDate.of(2021, 5, 5),
-                LocalDate.of(2021, 5, 5),
-                loansListTMP
-        );
+    @Autowired
+    private LoanService loanService;
+
+    @PostMapping(value = "registerLoan", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void registerLoan(@RequestBody LoansDto loansDto) throws LoanNotFoundException{
+        Loans loan = loansMapper.mapToLoan(loansDto);
+        loanService.saveLoan(loan);
     }
 
-    @GetMapping(value = "getAllCustomes")
-    public List<CustomerDto> getAllCustomers(){
-        List<CustomerDto> customerDtoList = new ArrayList<>();
-        CustomerDto customerDto1 = new CustomerDto();
-        List<Long> loansListTMP = new ArrayList<>();
-        CustomerDto customerDto2 = new CustomerDto(
-                1L,
-                "name",
-                "surname",
-                "+48 558585",
-                "street JAVA",
-                "858/55",
-                "00-855",
-                "City",
-                "pesel 8585858",
-                "NIP 858-965",
-                "passport",
-                "pass85858",
-                "mail@sds",
-                true,
-                LocalDate.of(2021, 5, 5),
-                LocalDate.of(2021, 5, 5),
-                loansListTMP
-        );
+    @GetMapping(value = "findLoanById")
+    public LoansDto getCustomer(@RequestParam Long loanId) throws LoanNotFoundException {
 
-        customerDtoList.add(customerDto1);
-        customerDtoList.add(customerDto2);
-        return customerDtoList;
+        Loans loan = loanService.getLoanById(loanId).orElseThrow(()-> new LoanNotFoundException(""));
+        return loansMapper.matToLoanDto(loan);
     }
 
-    @PutMapping(value = "updateCustomer")
-    public CustomerDto updateUser(@RequestBody CustomerDto customerDto ) throws CustomerNotFoundException {
+    @GetMapping(value = "getAllLoans")
+    public List<LoansDto> getAllLoans(){
+        List<Loans> loansList = loanService.getAllLoans();
+        return  loansMapper.mapToLoansDtoList(loansList);
+    }
 
-        if (customerDto.getId() == 0){
-            return new CustomerDto(
-                    1L,
-                    "name UPDATE",
-                    "surname UDATE",
-                    "+48 558585",
-                    "street JAVA",
-                    "858/55",
-                    "00-855",
-                    "City",
-                    "pesel 8585858",
-                    "NIP 858-965",
-                    "passport",
-                    "pass85858",
-                    "mail@sds",
-                    true,
-                    LocalDate.of(2021, 5, 5),
-                    LocalDate.of(2021, 5, 5),
-                    new ArrayList<Long>(0)
-            );
-        } else {
-            throw new CustomerNotFoundException("Please check customer number, customer is not exist in data base.");
+    @PutMapping(value = "updateLoan")
+    public LoansDto updateLoan(@RequestBody LoansDto loansDto ) throws LoanNotFoundException {
+
+        if (loanService.getLoanById(loansDto.getId()).isPresent()){
+            Loans loans = loansMapper.mapToLoan(loansDto);
+            Loans savedLoan = loanService.saveLoan(loans);
+            return loansMapper.matToLoanDto(savedLoan);
         }
+        throw new LoanNotFoundException("UPDATE customer operation  is aborted, customer is not exist in DB.");
     }
 
-    @DeleteMapping(value = "removeCustomerFromDB")
-    public boolean deleteCustomer(@RequestParam Long customerId) throws CustomerNotFoundException{
-
-        if (customerId == 100){
-            throw new  CustomerNotFoundException("Customer not found, please check customer ID.");
-        } else {
+    @DeleteMapping(value = "removeLoanFromDB")
+    public boolean deleteLoan(@RequestParam Long loanId) throws LoanNotFoundException{
+        if (loanService.getLoanById(loanId).isPresent()){
+            loanService.deleteLoan(loanId);
             return true;
         }
+        return false;
     }
 }

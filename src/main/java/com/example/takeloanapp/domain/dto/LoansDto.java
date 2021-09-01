@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,7 +31,7 @@ public class LoansDto {
     private int counterDaysArrears;
     private BigDecimal penaltyInterest;
     private BigDecimal penaltyInterestAmount;
-    private Customer customer;
+    private Long customerId;
     private String loanAccountNumber;
     private boolean isClosed;
 

@@ -25,9 +25,6 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
     @PostMapping(value = "createCustomer", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void createCustomer(@RequestBody CustomerDto customerDto) throws CustomerNotFoundException {
         Customer customer = mapper.mapToCustomer(customerDto);
@@ -65,15 +62,12 @@ public class CustomerController {
 
     @DeleteMapping(value = "removeCustomerFromDB")
     public boolean deleteCustomer(@RequestParam Long customerId) throws CustomerNotFoundException{
-        boolean answer = false;
-
         if (customerService.getCustomerById(customerId).isPresent()){
-        customerService.deleteUser(customerId);
-        answer = true;
+            customerService.deleteUser(customerId);
+            return  true;
         }
-        return answer;
+        return false;
     }
-
 
     @GetMapping(value = "getCustomerByPesel")
     public CustomerDto getCustomerByPeselNumber(@RequestParam String peselNumber) throws CustomerNotFoundException {
@@ -86,5 +80,4 @@ public class CustomerController {
         Customer customer = customerService.getCustomerByPersonalId(idNumber).orElseThrow(() -> new CustomerNotFoundException("Customer ID NUMBER number is not exist in data base."));
         return mapper.mapToCustomerDto(customer);
     }
-
 }
