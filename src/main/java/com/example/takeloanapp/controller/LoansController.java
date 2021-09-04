@@ -34,13 +34,15 @@ public class LoansController {
     @PostMapping(value = "registerLoan", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void registerLoan(@RequestBody LoansDto loansDto) throws LoanNotFoundException{
         Loans loan = loansMapper.mapToLoan(loansDto);
-        loanService.saveLoan(loan);
+        boolean loanHasMandatoryField =loanService.validateLoanMandatoryDate(loan);
+        if(loanHasMandatoryField){
+            loanService.saveLoan(loan);
+        }
     }
 
     @GetMapping(value = "findLoanById")
     public LoansDto getCustomer(@RequestParam Long loanId) throws LoanNotFoundException {
-
-        Loans loan = loanService.getLoanById(loanId).orElseThrow(()-> new LoanNotFoundException(""));
+        Loans loan = loanService.getLoanById(loanId).orElseThrow(()-> new LoanNotFoundException("Loan of specified number ID does not exist in DB."));
         return loansMapper.matToLoanDto(loan);
     }
 
@@ -52,18 +54,17 @@ public class LoansController {
 
     @PutMapping(value = "updateLoan")
     public LoansDto updateLoan(@RequestBody LoansDto loansDto ) throws LoanNotFoundException {
-
-        if (loanService.getLoanById(loansDto.getId()).isPresent()){
+        if (loanService.checkByIdThatLoanExist(loansDto.getId())){
             Loans loans = loansMapper.mapToLoan(loansDto);
             Loans savedLoan = loanService.saveLoan(loans);
             return loansMapper.matToLoanDto(savedLoan);
         }
-        throw new LoanNotFoundException("UPDATE customer operation  is aborted, customer is not exist in DB.");
+        throw new LoanNotFoundException("UPDATE loan is aborted, loan is not exist in DB.");
     }
 
     @DeleteMapping(value = "removeLoanFromDB")
     public boolean deleteLoan(@RequestParam Long loanId) throws LoanNotFoundException{
-        if (loanService.getLoanById(loanId).isPresent()){
+        if (loanService.checkByIdThatLoanExist(loanId)){
             loanService.deleteLoan(loanId);
             return true;
         }

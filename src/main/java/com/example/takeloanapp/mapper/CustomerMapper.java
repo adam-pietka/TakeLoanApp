@@ -1,8 +1,10 @@
 package com.example.takeloanapp.mapper;
 
 import com.example.takeloanapp.domain.Customer;
+import com.example.takeloanapp.domain.LoanApplicationsList;
 import com.example.takeloanapp.domain.Loans;
 import com.example.takeloanapp.domain.dto.CustomerDto;
+import com.example.takeloanapp.repository.LoanApplicationListRepository;
 import com.example.takeloanapp.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,9 @@ public class CustomerMapper {
 
     @Autowired
     private LoanRepository loanRepository;
+
+    @Autowired
+    private LoanApplicationListRepository loanApplicationListRepository;
 
     public Customer mapToCustomer(final CustomerDto customerDto){
 
@@ -37,8 +42,11 @@ public class CustomerMapper {
                 customerDto.getRegistrationDate(),
                 customerDto.getClosedDate(),
                 customerDto.getLoansId().stream()
-                .map(loanRepository::findById).map(Optional::orElseThrow)
-                .collect(Collectors.toList())
+                            .map(loanRepository::findById).map(Optional::orElseThrow)
+                            .collect(Collectors.toList()),
+                customerDto.getLoansApplicationId().stream()
+                        .map(loanApplicationListRepository::findById).map(Optional::orElseThrow)
+                        .collect(Collectors.toList())
         );
     }
 
@@ -62,6 +70,9 @@ public class CustomerMapper {
                 customer.getClosedDate(),
                 customer.getLoansList().stream()
                         .map(Loans::getId)
+                        .collect(Collectors.toList()),
+                customer.getLoanApplicationsLists().stream()
+                        .map(LoanApplicationsList::getId)
                         .collect(Collectors.toList())
         );
     }

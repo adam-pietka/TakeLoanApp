@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class LoansDto {
+
     private Long id;
     private String productName;
     private int periodInMonth;

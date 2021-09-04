@@ -1,6 +1,6 @@
 package com.example.takeloanapp.service;
 
-import com.example.takeloanapp.domain.Customer;
+import com.example.takeloanapp.controller.exception.LoanNotFoundException;
 import com.example.takeloanapp.domain.Loans;
 import com.example.takeloanapp.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,4 +31,17 @@ public class LoanService {
         loanRepository.deleteById(loanId);
     }
 
+    public boolean checkByIdThatLoanExist(Long loanId) throws  LoanNotFoundException{
+        if (loanRepository.findById(loanId).isEmpty()){
+            throw new LoanNotFoundException("Loan of specified number ID does not exist in DB.");
+        }
+        return true;
+    }
+
+    public boolean validateLoanMandatoryDate(Loans loans) throws LoanNotFoundException {
+        if (loans.getLoanAmount() ==  null|| loans.getLoanRate() == null){
+            throw  new LoanNotFoundException("Please correct loan amount or loan rate.");
+        }
+        return true;
+    }
 }

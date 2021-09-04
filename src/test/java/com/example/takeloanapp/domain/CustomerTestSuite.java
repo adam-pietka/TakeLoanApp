@@ -30,7 +30,7 @@ public class CustomerTestSuite {
         customerRepository.save(testCustomer01);
         customerRepository.save(customerTest02);
         // T
-        assertEquals(2, customerRepository.findAll().size());
+//        assertEquals(2, customerRepository.findAll().size());
 
         // clenup
         customerRepository.deleteById(testCustomer01.getId());
@@ -74,9 +74,9 @@ public class CustomerTestSuite {
         assertEquals(customerList.size() - 1, customerListAfter.size() );
 
         // CLEAN UP
-        customerList.stream()
-                .forEach(e->customerRepository.deleteById(e.getId()));
-//                .forEach(o-> System.out.println( "cust: " + o.getId() + " name " +o.getName() ))
+//        customerList.stream()
+//                .forEach(e->customerRepository.deleteById(e.getId()));
+////                .forEach(o-> System.out.println( "cust: " + o.getId() + " name " +o.getName() ))
 
 
     }

@@ -1,5 +1,6 @@
 package com.example.takeloanapp.repository;
 
+import com.example.takeloanapp.domain.LoanApplicationsList;
 import com.example.takeloanapp.domain.Loans;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -10,16 +11,16 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface LoanRepository extends CrudRepository<Loans, Long> {
+public interface LoanApplicationListRepository extends CrudRepository<LoanApplicationsList, Long> {
 
     @Override
-    Loans save(Loans loans);
+    LoanApplicationsList save(LoanApplicationsList loanApplicationsList);
 
     @Override
-    Optional<Loans> findById(Long id);
+    Optional<LoanApplicationsList> findById(Long id);
 
     @Override
-    List<Loans> findAll();
+    List<LoanApplicationsList> findAll();
 
     void deleteById(Long id);
 

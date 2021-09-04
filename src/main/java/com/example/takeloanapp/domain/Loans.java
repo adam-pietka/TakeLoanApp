@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table
+@Table(name = "LOANS")
 public class Loans {
 
     private Long id;
@@ -85,7 +85,7 @@ public class Loans {
     @Id
     @GeneratedValue
     @NotNull
-    @Column(name = "ID", unique = true)
+    @Column(name = "LOAN_ID", unique = true)
     public Long getId() {
         return id;
     }

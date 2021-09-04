@@ -42,7 +42,7 @@ public class CustomerService {
 
     public  boolean validateCustomerDataBeforeSaveInDb(Customer customer) throws  CustomerNotFoundException{
 
-        if (customer.getName().isEmpty() || customer.getName().isBlank() || customer.getSurname().isEmpty() ||  customer.getSurname().isBlank()){
+        if (customer.getName().isEmpty() || customer.getName().isBlank() || customer.getSurname().isEmpty() ||  customer.getSurname().isBlank() || customer.getSurname() == null){
             throw new CustomerNotFoundException("Customer has not fill all mandatory fields, like: NAME.");
         }
         if (customer.getPeselNumber().isEmpty() || customer.getPeselNumber().isBlank()){

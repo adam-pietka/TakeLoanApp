@@ -5,6 +5,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "CUSTOMER")
@@ -26,7 +27,8 @@ public class Customer {
     private boolean isActive;
     private LocalDate registrationDate;
     private LocalDate closedDate;
-    private List<Loans> loansList = new ArrayList<>(); //ManyToMany
+    private List<Loans> loansList = new ArrayList<>();
+    private List<LoanApplicationsList> loanApplicationsLists = new ArrayList<>();
 
     public Customer(){
     }
@@ -76,6 +78,27 @@ public class Customer {
         this.registrationDate = registrationDate;
         this.closedDate = closedDate;
         this.loansList = loansList;
+    }
+
+    public Customer(Long id, String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String nipNumber, String idType, String idNumber, String eMail, boolean isActive, LocalDate registrationDate, LocalDate closedDate, List<Loans> loansList, List<LoanApplicationsList> loanApplicationsLists) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.phoneNumber = phoneNumber;
+        this.addressStreet = addressStreet;
+        this.addressNumber = addressNumber;
+        this.addressPostCode = addressPostCode;
+        this.addressCity = addressCity;
+        this.peselNumber = peselNumber;
+        this.nipNumber = nipNumber;
+        this.idType = idType;
+        this.idNumber = idNumber;
+        this.eMail = eMail;
+        this.isActive = isActive;
+        this.registrationDate = registrationDate;
+        this.closedDate = closedDate;
+        this.loansList = loansList;
+        this.loanApplicationsLists = loanApplicationsLists;
     }
 
     @Id
@@ -155,6 +178,15 @@ public class Customer {
         return loansList;
     }
 
+    @OneToMany(
+            targetEntity = LoanApplicationsList.class,
+            mappedBy = "id",
+            fetch = FetchType.LAZY
+    )
+    public List<LoanApplicationsList> getLoanApplicationsLists() {
+        return loanApplicationsLists;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -215,15 +247,15 @@ public class Customer {
         this.closedDate = closedDate;
     }
 
-    public void setLoansList(List<Loans> loansList) {
-        this.loansList = loansList;
-    }
-
     public void setPeselNumber(String peselNumber) {
         this.peselNumber = peselNumber;
     }
 
-    public void seteMail(String eMail) {
-        this.eMail = eMail;
+    public void setLoansList(List<Loans> loansList) {
+        this.loansList = loansList;
+    }
+
+    public void setLoanApplicationsLists(List<LoanApplicationsList> loanApplicationsLists) {
+        this.loanApplicationsLists = loanApplicationsLists;
     }
 }

@@ -21,7 +21,7 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
     @Override
     List<Customer> findAll();
 
-    void deleteById(Customer id);
+    void deleteById(Long id);
 
     Optional<Customer> findByPeselNumber(String peselNumber);
 

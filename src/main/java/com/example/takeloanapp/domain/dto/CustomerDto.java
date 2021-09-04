@@ -31,6 +31,7 @@ public class CustomerDto {
     private LocalDate registrationDate;
     private LocalDate closedDate;
     private List<Long> loansId = new ArrayList<>();
+    private List<Long> loansApplicationId = new ArrayList<>();
 
 
     @Override
