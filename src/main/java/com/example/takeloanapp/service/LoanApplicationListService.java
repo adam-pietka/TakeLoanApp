@@ -10,6 +10,7 @@ import com.example.takeloanapp.repository.CustomerRepository;
 import com.example.takeloanapp.repository.LoanApplicationListRepository;
 import com.example.takeloanapp.repository.LoanRepository;
 import com.example.takeloanapp.validator.LoanApplicationValidator;
+import com.example.takeloanapp.validator.LoanConditionValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,9 @@ public class LoanApplicationListService {
     @Autowired
     private LoanApplicationValidator loanApplicationValidator;
 
+    @Autowired
+    private LoanConditionValidator loanConditionValidator;
+
     public LoanApplicationsList saveLoanApp(LoanApplicationsList loanApplicationsList) throws LoanApplicationsListNotFoundException{
         LoanApplicationsList savedRecord = loanAppRepository.save(loanApplicationsList);
         if (loanAppRepository.findById(savedRecord.getId()).isEmpty()){
@@ -34,7 +38,9 @@ public class LoanApplicationListService {
         }
 
         savedRecord.setDateOfRegistrationOfApplication(LocalDate.now());
-        savedRecord.setApplicationAccepted(loanApplicationValidator.validateBasicData(savedRecord));
+        boolean isAccepted = loanApplicationValidator.validateBasicData(savedRecord)
+                && loanConditionValidator.validLoanData(savedRecord);
+        savedRecord.setApplicationAccepted(isAccepted);
 
         loanAppRepository.save(savedRecord);
         return savedRecord;

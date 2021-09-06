@@ -14,6 +14,10 @@ import java.time.LocalDate;
 public class LoanApplicationValidator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoanApplicationValidator.class);
+    private final int MIN_AGE = 18;
+    private final int MAX_AGE = 65;
+    private final BigDecimal MIN_INCOME_AMOUNT = new BigDecimal("2000.00");
+    private final BigDecimal PERCENT_TRESHOLD = new BigDecimal("0.50").setScale(2, RoundingMode.HALF_UP);
 
     public boolean validateBasicData(LoanApplicationsList loanAppl){
         LOGGER.info("Starting checking incom, T-recommendation...");
@@ -46,7 +50,7 @@ public class LoanApplicationValidator {
         if(checkMonth == 0 || checkMonth == 1){
             checkYear = checkYear + 1900;
         }
-        if (currentYear - checkYear >= 65 || currentYear - checkYear < 18){
+        if (currentYear - checkYear >= MAX_AGE || currentYear - checkYear < MIN_AGE){
             LOGGER.info("Checking AGE is complete with NEGATIVE result.");
             return true;
         }
@@ -56,9 +60,8 @@ public class LoanApplicationValidator {
 
     public boolean isIncomeToLow(LoanApplicationsList loanAppl){
         LOGGER.info("Starting checking MINIMUM INCOME.");
-        BigDecimal minIncomeAmount = new BigDecimal("2000.00");
         BigDecimal customerIncome = loanAppl.getIncomeAmount();
-        if (customerIncome.compareTo(minIncomeAmount) == 1 ){
+        if (customerIncome.compareTo(MIN_INCOME_AMOUNT) == 1 ){
             LOGGER.info("Checking INCOME is complete - with POSITIVE result.");
             return false;
         }
@@ -71,14 +74,13 @@ public class LoanApplicationValidator {
 
         BigDecimal otherLiabilities = loanAppl.getOtherLiabilities().setScale(2, RoundingMode.HALF_UP);
         BigDecimal customerIncome = loanAppl.getIncomeAmount().setScale(2, RoundingMode.HALF_UP);
-        BigDecimal percentageThreshold = new BigDecimal("0.5").setScale(2, RoundingMode.HALF_UP);
         LOGGER.info("otherLiabilities: " + otherLiabilities);
         LOGGER.info("customerIncome: " + customerIncome);
-        LOGGER.info("Threshold: "  + percentageThreshold);
+        LOGGER.info("Threshold: "  + PERCENT_TRESHOLD);
 
         BigDecimal calulatedPercent =  otherLiabilities.divide(customerIncome, 3, RoundingMode.HALF_UP);
 
-        if(calulatedPercent.compareTo(percentageThreshold) ==  1){
+        if(calulatedPercent.compareTo(PERCENT_TRESHOLD) ==  1){
             LOGGER.info("Checking CREDIT RATE is complete with NEGATIVE result: FALSE value: "  + calulatedPercent);
             return true;
         }
