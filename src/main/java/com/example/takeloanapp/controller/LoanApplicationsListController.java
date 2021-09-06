@@ -1,16 +1,11 @@
 package com.example.takeloanapp.controller;
 
+import com.example.takeloanapp.controller.exception.CustomerNotFoundException;
 import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
-import com.example.takeloanapp.controller.exception.LoanNotFoundException;
 import com.example.takeloanapp.domain.LoanApplicationsList;
-import com.example.takeloanapp.domain.Loans;
 import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
-import com.example.takeloanapp.domain.dto.LoansDto;
-import com.example.takeloanapp.mapper.CustomerMapper;
 import com.example.takeloanapp.mapper.LoanApplicationsListMapper;
-import com.example.takeloanapp.mapper.LoansMapper;
 import com.example.takeloanapp.service.LoanApplicationListService;
-import com.example.takeloanapp.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +18,6 @@ import java.util.List;
 public class LoanApplicationsListController {
 
     @Autowired
-    private CustomerMapper customerMapper;
-
-    @Autowired
     private LoanApplicationsListMapper loanAppListMapper;
 
     @Autowired
@@ -34,8 +26,10 @@ public class LoanApplicationsListController {
 
     @PostMapping(value = "registerLoanApplication", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void registerLoanApplication(@RequestBody LoanApplicationsListDto loanApplicationsListDto) throws LoanApplicationsListNotFoundException {
+        if (loanAppListService.checkThatAppHasMandatoryFields(loanApplicationsListDto)){
         LoanApplicationsList loanApp = loanAppListMapper.mapToLoanApplicationsList(loanApplicationsListDto);
         loanAppListService.saveLoanApp(loanApp);
+        }
     }
 
     @GetMapping(value = "findLoanAppById")
@@ -52,7 +46,9 @@ public class LoanApplicationsListController {
 
     @PutMapping(value = "updateLoanApp")
     public LoanApplicationsListDto updateLoan(@RequestBody LoanApplicationsListDto loansAppDto ) throws LoanApplicationsListNotFoundException {
-
+        if (!loanAppListService.checkByIdThatLoanAppIsExist(loansAppDto.getId())){
+            throw new LoanApplicationsListNotFoundException("Loan application is not exist in DB - UPDATE is failed.");
+        }
         LoanApplicationsList loanApplicationsList = loanAppListMapper.mapToLoanApplicationsList(loansAppDto);
         LoanApplicationsList savedLoanAppList = loanAppListService.saveLoanApp(loanApplicationsList);
         return loanAppListMapper.matToLoanApplicationsListDto(savedLoanAppList);
@@ -61,8 +57,7 @@ public class LoanApplicationsListController {
     @DeleteMapping(value = "removeLoanAppFromDB")
     public boolean deleteLoan(@RequestParam Long loanAppId) throws LoanApplicationsListNotFoundException {
         if (loanAppListService.checkByIdThatLoanAppIsExist(loanAppId)) {
-            loanAppListService.deleteLoanApp(loanAppId);
-            return true;
+            return loanAppListService.deleteLoanApp(loanAppId);
         }
         return false;
     }

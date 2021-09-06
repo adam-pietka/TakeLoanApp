@@ -20,11 +20,17 @@ public class CustomerService {
         return repository.save(customer);
     }
 
-    public Optional<Customer> getCustomerById(Long customerId){
+    public Optional<Customer> getCustomerById(Long customerId) throws CustomerNotFoundException{
+        if (repository.findById(customerId).isEmpty()){
+            throw new CustomerNotFoundException("Customer has not fill all mandatory fields, like: NAME.");
+        }
         return repository.findById(customerId);
     }
 
-    public List<Customer> getAllCustomers() {
+    public List<Customer> getAllCustomers()throws  CustomerNotFoundException {
+        if (repository.findAll().isEmpty()){
+            throw new CustomerNotFoundException("Table do not contain any records.");
+        }
         return repository.findAll();
     }
 

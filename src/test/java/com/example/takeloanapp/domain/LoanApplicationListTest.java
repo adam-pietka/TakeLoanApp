@@ -23,11 +23,10 @@ public class LoanApplicationListTest {
 
     @Autowired
     private CustomerRepository customerRepository;
-
     @Autowired
     private LoanApplicationListRepository loanApplicationListRepository;
 
-    public Customer testCustomer01 = new Customer("name", "s", "85888", "street", "8558/58", "55-885", "City", "858-88-88", "idNumber", "mail");
+    public Customer testCustomer01 = new Customer("name", "surname", "+48 85888", "street", "8558/58", "55-885", "City", "858-88-88", "PASSPORT", "aa858585", "mail");
     public BigDecimal amount = new BigDecimal("25");
     public LocalDate dataOf = LocalDate.of(2021, 4,25 );
 

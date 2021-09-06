@@ -17,10 +17,10 @@ import static org.junit.Assert.*;
 @Transactional
 public class CustomerTestSuite {
 
-    public Customer testCustomer01 = new Customer("name", "s", "85888", "street", "8558/58", "55-885", "City", "858-88-88", "idNumber", "mail");
-
     @Autowired
     private CustomerRepository customerRepository;
+
+    public Customer testCustomer01 = new Customer("name", "surname", "+48 85888", "street", "8558/58", "55-885", "City", "858-88-88", "PASSPORT", "aa858585", "mail");
 
     @Test
     public void testSaveCustomer(){

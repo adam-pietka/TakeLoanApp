@@ -104,6 +104,7 @@ public class LoanApplicationsList {
         return id;
     }
 
+//    @NotNull
     @ManyToOne
     @JoinColumn(name = "CUSTOMER_ID")
     public Customer getCustomer() {

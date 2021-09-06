@@ -35,7 +35,8 @@ public class LoansController {
     public void registerLoan(@RequestBody LoansDto loansDto) throws LoanNotFoundException{
         Loans loan = loansMapper.mapToLoan(loansDto);
         boolean loanHasMandatoryField =loanService.validateLoanMandatoryDate(loan);
-        if(loanHasMandatoryField){
+
+        if(!loanHasMandatoryField){
             loanService.saveLoan(loan);
         }
     }

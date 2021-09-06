@@ -44,7 +44,7 @@ public class CustomerController {
     }
 
     @GetMapping(value = "getAllCustomes")
-    public List<CustomerDto> getAllCustomers(){
+    public List<CustomerDto> getAllCustomers() throws CustomerNotFoundException {
         List<Customer> customerList = customerService.getAllCustomers();
         return mapper.mapToCustomerDtoList(customerList);
     }

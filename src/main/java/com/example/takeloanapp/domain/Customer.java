@@ -33,7 +33,8 @@ public class Customer {
     public Customer(){
     }
 
-    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String idType, String idNumber, String eMail) {
+
+    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String idType, String idNumber, String eMail) {
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
@@ -41,12 +42,13 @@ public class Customer {
         this.addressNumber = addressNumber;
         this.addressPostCode = addressPostCode;
         this.addressCity = addressCity;
+        this.peselNumber = peselNumber;
         this.idType = idType;
         this.idNumber = idNumber;
         this.eMail = eMail;
     }
 
-    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String nipNumber, String idType, String idNumber, String eMail) {
+    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String nipNumber, String eMail) {
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
