@@ -1,6 +1,5 @@
 package com.example.takeloanapp.controller;
 
-import com.example.takeloanapp.controller.exception.CustomerNotFoundException;
 import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
 import com.example.takeloanapp.domain.LoanApplicationsList;
 import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
@@ -25,11 +24,12 @@ public class LoanApplicationsListController {
 
 
     @PostMapping(value = "registerLoanApplication", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void registerLoanApplication(@RequestBody LoanApplicationsListDto loanApplicationsListDto) throws LoanApplicationsListNotFoundException {
+    public LoanApplicationsList registerLoanApplication(@RequestBody LoanApplicationsListDto loanApplicationsListDto) throws LoanApplicationsListNotFoundException {
         if (loanAppListService.checkThatAppHasMandatoryFields(loanApplicationsListDto)){
         LoanApplicationsList loanApp = loanAppListMapper.mapToLoanApplicationsList(loanApplicationsListDto);
-        loanAppListService.saveLoanApp(loanApp);
+        return loanAppListService.saveLoanApp(loanApp);
         }
+        throw new LoanApplicationsListNotFoundException("Loan application is not saved.");
     }
 
     @GetMapping(value = "findLoanAppById")

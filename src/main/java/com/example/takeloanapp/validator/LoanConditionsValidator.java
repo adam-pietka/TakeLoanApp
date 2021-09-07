@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 
 @Service
-public class LoanConditionValidator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoanConditionValidator.class);
+public class LoanConditionsValidator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoanConditionsValidator.class);
 
     private final BigDecimal MIN_AMOUNT = new BigDecimal("500.00");
     private final BigDecimal MAX_AMOUNT = new BigDecimal("120000.00");
     private final int MIN_PERIOD = 10;
-    private final int MAX_PERIOD = 84;
+    private final int MAX_PERIOD = 120;
 
     public boolean validLoanData(LoanApplicationsList loanAppl){
         LOGGER.info("Starting checking loan condition like: period / minimum amount and maximum amount.");
@@ -30,7 +30,7 @@ public class LoanConditionValidator {
     public boolean periodValidator(int periodInMonth){
         LOGGER.info("Starting checking loan condition: period in month");
         if (periodInMonth < MIN_PERIOD){
-            LOGGER.info("Period is to short, mini valu is: " + MIN_PERIOD + ", requested is: " + periodInMonth);
+            LOGGER.info("Period is to short, mini value is: " + MIN_PERIOD + ", requested is: " + periodInMonth);
             return true;
         }
         if (periodInMonth > MAX_PERIOD){

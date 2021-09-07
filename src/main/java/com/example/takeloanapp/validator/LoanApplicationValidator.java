@@ -17,7 +17,7 @@ public class LoanApplicationValidator {
     private final int MIN_AGE = 18;
     private final int MAX_AGE = 65;
     private final BigDecimal MIN_INCOME_AMOUNT = new BigDecimal("2000.00");
-    private final BigDecimal PERCENT_TRESHOLD = new BigDecimal("0.50").setScale(2, RoundingMode.HALF_UP);
+    private final BigDecimal PERCENT_TRESHOLD = new BigDecimal("0.50").setScale(3, RoundingMode.HALF_UP);
 
     public boolean validateBasicData(LoanApplicationsList loanAppl){
         LOGGER.info("Starting checking incom, T-recommendation...");
@@ -87,4 +87,21 @@ public class LoanApplicationValidator {
         LOGGER.info("Checking CREDIT RATE is complete with POSITIVE result: TRUE - value: " + calulatedPercent);
         return false;
     }
+
+    public boolean simulationOfCredit(LoanApplicationsList loanAppl, BigDecimal monthlyPayment){
+        LOGGER.info("Starting prepare SIMULATION to checking CREDIT RATE.");
+
+        BigDecimal otherLiabilitiesPlusMonthly = loanAppl.getOtherLiabilities().add(monthlyPayment).setScale(2,RoundingMode.HALF_UP);
+        BigDecimal customerIncome = loanAppl.getIncomeAmount().setScale(2, RoundingMode.HALF_UP);
+        BigDecimal calulatedPercent =  otherLiabilitiesPlusMonthly.divide(customerIncome, 3, RoundingMode.HALF_UP);
+
+        if(calulatedPercent.compareTo(PERCENT_TRESHOLD) ==  - 1){
+            LOGGER.info("Checking Simulation of new credit rate is complete with POSITIVE SIMULATION  result: "  + calulatedPercent);
+            return true;
+        }
+        LOGGER.info("Checking Simulation of new credit rate is complete with NEGATIVE  SIMULATION result: - value: " + calulatedPercent);
+        return false;
+    }
+
+
 }

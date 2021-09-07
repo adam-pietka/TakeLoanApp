@@ -1,16 +1,12 @@
 package com.example.takeloanapp.service;
 
-import com.example.takeloanapp.controller.exception.CustomerNotFoundException;
+import com.example.takeloanapp.calculator.LoanCalculator;
 import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
-import com.example.takeloanapp.controller.exception.LoanNotFoundException;
 import com.example.takeloanapp.domain.LoanApplicationsList;
-import com.example.takeloanapp.domain.Loans;
 import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
-import com.example.takeloanapp.repository.CustomerRepository;
 import com.example.takeloanapp.repository.LoanApplicationListRepository;
-import com.example.takeloanapp.repository.LoanRepository;
 import com.example.takeloanapp.validator.LoanApplicationValidator;
-import com.example.takeloanapp.validator.LoanConditionValidator;
+import com.example.takeloanapp.validator.LoanConditionsValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +25,10 @@ public class LoanApplicationListService {
     private LoanApplicationValidator loanApplicationValidator;
 
     @Autowired
-    private LoanConditionValidator loanConditionValidator;
+    private LoanConditionsValidator loanConditionsValidator;
+
+    @Autowired
+    private LoanCalculator loanCalculator;
 
     public LoanApplicationsList saveLoanApp(LoanApplicationsList loanApplicationsList) throws LoanApplicationsListNotFoundException{
         LoanApplicationsList savedRecord = loanAppRepository.save(loanApplicationsList);
@@ -38,10 +37,14 @@ public class LoanApplicationListService {
         }
 
         savedRecord.setDateOfRegistrationOfApplication(LocalDate.now());
-        boolean isAccepted = loanApplicationValidator.validateBasicData(savedRecord)
-                && loanConditionValidator.validLoanData(savedRecord);
-        savedRecord.setApplicationAccepted(isAccepted);
 
+        BigDecimal monthlyInterestRate = loanCalculator.calculateMonthlyInterestRate(savedRecord);
+        BigDecimal monthlyPayment =  loanCalculator.monthlyPayment(savedRecord, monthlyInterestRate);
+
+        boolean isAccepted = loanApplicationValidator.validateBasicData(savedRecord)
+                && loanConditionsValidator.validLoanData(savedRecord)
+                && loanApplicationValidator.simulationOfCredit(savedRecord, monthlyPayment);
+        savedRecord.setApplicationAccepted(isAccepted);
         loanAppRepository.save(savedRecord);
         return savedRecord;
     }
