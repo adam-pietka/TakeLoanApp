@@ -15,16 +15,16 @@ public class LoanService {
     @Autowired
     private LoanRepository loanRepository;
 
+    public Loans saveLoan(Loans loans){
+        return loanRepository.save(loans) ;
+    }
+
     public Optional<Loans> getLoanById(Long loanId){
         return loanRepository.findById(loanId);
     }
 
     public List<Loans> getAllLoans(){
         return loanRepository.findAll();
-    }
-
-    public Loans saveLoan(Loans loans){
-        return loanRepository.save(loans) ;
     }
 
     public void deleteLoan(Long loanId){
@@ -42,6 +42,7 @@ public class LoanService {
         if (loans.getLoanAmount() ==  null|| loans.getLoanRate() == null){
             throw  new LoanNotFoundException("Please correct loan amount or loan rate.");
         }
+
         return true;
     }
 }

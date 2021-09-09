@@ -29,7 +29,6 @@ public class Customer {
     private LocalDate closedDate;
     private List<Loans> loansList = new ArrayList<>();
     private List<LoanApplicationsList> loanApplicationsLists = new ArrayList<>();
-
     public Customer(){
     }
 

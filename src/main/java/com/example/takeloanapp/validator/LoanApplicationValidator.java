@@ -89,8 +89,7 @@ public class LoanApplicationValidator {
     }
 
     public boolean simulationOfCredit(LoanApplicationsList loanAppl, BigDecimal monthlyPayment){
-        LOGGER.info("Starting prepare SIMULATION to checking CREDIT RATE.");
-
+        LOGGER.info("Starting prepare SIMULATION to checking CREDIT RATE with new instalment.");
         BigDecimal otherLiabilitiesPlusMonthly = loanAppl.getOtherLiabilities().add(monthlyPayment).setScale(2,RoundingMode.HALF_UP);
         BigDecimal customerIncome = loanAppl.getIncomeAmount().setScale(2, RoundingMode.HALF_UP);
         BigDecimal calulatedPercent =  otherLiabilitiesPlusMonthly.divide(customerIncome, 3, RoundingMode.HALF_UP);

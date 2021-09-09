@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-//@Transactional
+@Transactional
 public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
     @Override

@@ -4,21 +4,26 @@ import com.example.takeloanapp.calculator.LoanCalculator;
 import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
 import com.example.takeloanapp.domain.Customer;
 import com.example.takeloanapp.domain.LoanApplicationsList;
+import com.example.takeloanapp.domain.Loans;
 import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
 import com.example.takeloanapp.repository.CustomerRepository;
 import com.example.takeloanapp.repository.LoanApplicationListRepository;
 import com.example.takeloanapp.validator.LoanApplicationValidator;
 import com.example.takeloanapp.validator.LoanConditionsValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class LoanApplicationListService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoanApplicationListService.class);
 
     @Autowired
     private LoanApplicationListRepository loanAppRepository;
@@ -35,35 +40,33 @@ public class LoanApplicationListService {
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private LoanService loanService;
+
     public void saveLoanApp(LoanApplicationsList loanApplicationsList) throws LoanApplicationsListNotFoundException{
-//        LoanApplicationsList savedRecord = loanAppRepository.save(loanApplicationsList);
+        LOGGER.info("Starting saving loan application.");
         LoanApplicationsList savedRecord = loanApplicationsList;
-//        if (loanAppRepository.findById(savedRecord.getId()).isEmpty()){
-//            throw new LoanApplicationsListNotFoundException("Loan Application is not saved in database");
-//        }
         savedRecord.setDateOfRegistrationOfApplication(LocalDate.now());
 
-        BigDecimal monthlyInterestRate = loanCalculator.calculateMonthlyInterestRate(savedRecord);
-        BigDecimal monthlyPayment =  loanCalculator.monthlyPayment(savedRecord, monthlyInterestRate);
-
         boolean isAccepted = loanApplicationValidator.validateBasicData(savedRecord)
-                && loanConditionsValidator.validLoanData(savedRecord)
-                && loanApplicationValidator.simulationOfCredit(savedRecord, monthlyPayment);
-//        Customer customerHappy = savedRecord.getCustomer();
-//        customerHappy.getLoanApplicationsLists().add(savedRecord);
-//        savedRecord.getCustomer().getLoanApplicationsLists().add(savedRecord);
-//        customerService.saveUser(customerHappy);
+                && loanConditionsValidator.validLoanData(savedRecord);
 
-        if (isAccepted) {
-            savedRecord.setApplicationAccepted(true);
+        if (isAccepted){
+            startPreparingSimulation(savedRecord);
         } else {
+            LOGGER.info("Loan application has NOT been accepted.");
             savedRecord.setDataOfClosedOfApplication(LocalDate.now());
             savedRecord.setClosed(true);
         }
-
         savedRecord.setApplicationAccepted(isAccepted);
+
         loanAppRepository.save(savedRecord);
-//        return savedRecord;
+        if (loanAppRepository.findById(savedRecord.getId()).isEmpty()){
+            LOGGER.error("LOAN APPLICATION HAS NOT BEEN SAVED IN DATE BASE.");
+            throw new LoanApplicationsListNotFoundException("Loan Application is not saved in database");
+        } else {
+            LOGGER.info("Loan application has been saved in data base.");
+        }
     }
 
     public Optional<LoanApplicationsList> getLoanApplicationById(Long loanAppId)throws LoanApplicationsListNotFoundException {
@@ -106,5 +109,34 @@ public class LoanApplicationListService {
             throw new LoanApplicationsListNotFoundException("For loan application are missing fields, like: Employer name, phone number or address.");
         }
         return true;
+    }
+
+    public void startPreparingSimulation(LoanApplicationsList loanAppl){
+        LOGGER.info("Loan application has been accepted, starting prepare SIMULATION for LOAN");
+        BigDecimal monthlyInterestRate = loanCalculator.calculateMonthlyInterestRate(loanAppl);
+        BigDecimal monthlyPayment =  loanCalculator.monthlyPayment(loanAppl, monthlyInterestRate);
+        BigDecimal totalLoanAmount = loanCalculator.totalLoanPayments(loanAppl, monthlyPayment);
+
+        Loans newLoan = new Loans();
+        newLoan.setPeriodInMonth(loanAppl.getRepaymentPeriodInMonth());
+        newLoan.setStartDate(loanAppl.getDateOfRegistrationOfApplication());
+        newLoan.setEndDate(loanAppl.getDateOfRegistrationOfApplication().plusMonths(loanAppl.getRepaymentPeriodInMonth()));
+        newLoan.setDayOfInstalmentRepayment(loanAppl.getDateOfRegistrationOfApplication().getDayOfMonth());
+        newLoan.setLoanAmount(loanAppl.getLoanAmount());
+        newLoan.setLoanTotalInterest(totalLoanAmount.subtract(loanAppl.getLoanAmount()));
+        newLoan.setNextInstalmentInterestRepayment(monthlyInterestRate);
+        newLoan.setActive(true);
+        newLoan.setRegistrationDate(LocalDate.now());
+        newLoan.setCustomer(loanAppl.getCustomer());
+        newLoan.setClosed(false);
+
+        boolean simulationAnswer =  loanApplicationValidator.simulationOfCredit(loanAppl, monthlyPayment);
+        if (simulationAnswer){
+            LOGGER.info("Simulation for Loan looks fine, so we can go to next step.");
+            Loans allDataLoan =  loanCalculator.setStaticDataToLoan(newLoan);
+            loanService.saveLoan(allDataLoan);
+        } else {
+            LOGGER.info("Simulation for Loan looks badly, loan at this parameters can not be accepted, sorry.");
+        }
     }
 }
