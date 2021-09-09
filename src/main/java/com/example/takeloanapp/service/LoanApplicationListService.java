@@ -2,8 +2,10 @@ package com.example.takeloanapp.service;
 
 import com.example.takeloanapp.calculator.LoanCalculator;
 import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
+import com.example.takeloanapp.domain.Customer;
 import com.example.takeloanapp.domain.LoanApplicationsList;
 import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
+import com.example.takeloanapp.repository.CustomerRepository;
 import com.example.takeloanapp.repository.LoanApplicationListRepository;
 import com.example.takeloanapp.validator.LoanApplicationValidator;
 import com.example.takeloanapp.validator.LoanConditionsValidator;
@@ -30,12 +32,15 @@ public class LoanApplicationListService {
     @Autowired
     private LoanCalculator loanCalculator;
 
-    public LoanApplicationsList saveLoanApp(LoanApplicationsList loanApplicationsList) throws LoanApplicationsListNotFoundException{
-        LoanApplicationsList savedRecord = loanAppRepository.save(loanApplicationsList);
-        if (loanAppRepository.findById(savedRecord.getId()).isEmpty()){
-            throw new LoanApplicationsListNotFoundException("Loan Application is not saved in database");
-        }
+    @Autowired
+    private CustomerService customerService;
 
+    public void saveLoanApp(LoanApplicationsList loanApplicationsList) throws LoanApplicationsListNotFoundException{
+//        LoanApplicationsList savedRecord = loanAppRepository.save(loanApplicationsList);
+        LoanApplicationsList savedRecord = loanApplicationsList;
+//        if (loanAppRepository.findById(savedRecord.getId()).isEmpty()){
+//            throw new LoanApplicationsListNotFoundException("Loan Application is not saved in database");
+//        }
         savedRecord.setDateOfRegistrationOfApplication(LocalDate.now());
 
         BigDecimal monthlyInterestRate = loanCalculator.calculateMonthlyInterestRate(savedRecord);
@@ -44,9 +49,21 @@ public class LoanApplicationListService {
         boolean isAccepted = loanApplicationValidator.validateBasicData(savedRecord)
                 && loanConditionsValidator.validLoanData(savedRecord)
                 && loanApplicationValidator.simulationOfCredit(savedRecord, monthlyPayment);
+//        Customer customerHappy = savedRecord.getCustomer();
+//        customerHappy.getLoanApplicationsLists().add(savedRecord);
+//        savedRecord.getCustomer().getLoanApplicationsLists().add(savedRecord);
+//        customerService.saveUser(customerHappy);
+
+        if (isAccepted) {
+            savedRecord.setApplicationAccepted(true);
+        } else {
+            savedRecord.setDataOfClosedOfApplication(LocalDate.now());
+            savedRecord.setClosed(true);
+        }
+
         savedRecord.setApplicationAccepted(isAccepted);
         loanAppRepository.save(savedRecord);
-        return savedRecord;
+//        return savedRecord;
     }
 
     public Optional<LoanApplicationsList> getLoanApplicationById(Long loanAppId)throws LoanApplicationsListNotFoundException {

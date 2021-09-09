@@ -22,7 +22,6 @@ public class LoanCalculator {
 
     public BigDecimal calculateMonthlyInterestRate(LoanApplicationsList loansAppList){
         LOGGER.info("Starting calculating monthly interest rate. For application id: " + loansAppList.getId());
-//        BigDecimal b = new BigDecimal("10");
         BigDecimal monthlyInterestRate = ANNUAL_INTEREST_RATE.divide(BigDecimal.TEN,10,RoundingMode.CEILING) ;
         System.out.println(" BIG DECIMAL: " +  monthlyInterestRate );
         LOGGER.info("End of calculating monthly interest rate - is equal: '" + monthlyInterestRate + "' .");
@@ -50,11 +49,8 @@ public class LoanCalculator {
 
     public BigDecimal totalMonthlyPayments(LoanApplicationsList loanApp, BigDecimal monthlyPayment){
         BigDecimal periodInMonths = new BigDecimal(loanApp.getRepaymentPeriodInMonth());
-
         BigDecimal totalMonthlyPayments = monthlyPayment.multiply(periodInMonths);
         LOGGER.info("End of calculating TOTAL monthly payment - is equal: " + totalMonthlyPayments);
-
         return totalMonthlyPayments.setScale(2,RoundingMode.HALF_UP);
     }
-
 }

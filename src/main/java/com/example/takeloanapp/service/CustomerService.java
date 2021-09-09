@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +18,12 @@ public class CustomerService {
     private CustomerRepository repository;
 
     public Customer saveUser(Customer customer){
-        return repository.save(customer);
+        Customer savedCustomer = customer;
+        if (customer.getRegistrationDate() == null){
+        savedCustomer.setRegistrationDate(LocalDate.now());
+        savedCustomer.setActive(true);
+        }
+        return repository.save(savedCustomer);
     }
 
     public Optional<Customer> getCustomerById(Long customerId) throws CustomerNotFoundException{

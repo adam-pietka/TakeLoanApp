@@ -12,4 +12,6 @@ class LoanCalculatorTest {
 //        loanCalculator.calculateMonthlyInterestRate();
 
     }
+
+
 }

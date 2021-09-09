@@ -173,7 +173,7 @@ public class Customer {
 
     @OneToMany(
             targetEntity = Loans.class,
-            mappedBy = "id",
+            mappedBy = "customer",
             fetch = FetchType.LAZY
     )
     public List<Loans> getLoansList() {
@@ -182,7 +182,7 @@ public class Customer {
 
     @OneToMany(
             targetEntity = LoanApplicationsList.class,
-            mappedBy = "id",
+            mappedBy = "customer",
             fetch = FetchType.LAZY
     )
     public List<LoanApplicationsList> getLoanApplicationsLists() {

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
+//@Transactional
 public interface LoanApplicationListRepository extends CrudRepository<LoanApplicationsList, Long> {
 
     @Override

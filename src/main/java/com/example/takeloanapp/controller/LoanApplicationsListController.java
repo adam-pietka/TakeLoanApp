@@ -24,12 +24,13 @@ public class LoanApplicationsListController {
 
 
     @PostMapping(value = "registerLoanApplication", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public LoanApplicationsList registerLoanApplication(@RequestBody LoanApplicationsListDto loanApplicationsListDto) throws LoanApplicationsListNotFoundException {
+    public void registerLoanApplication(@RequestBody LoanApplicationsListDto loanApplicationsListDto) throws LoanApplicationsListNotFoundException {
         if (loanAppListService.checkThatAppHasMandatoryFields(loanApplicationsListDto)){
         LoanApplicationsList loanApp = loanAppListMapper.mapToLoanApplicationsList(loanApplicationsListDto);
-        return loanAppListService.saveLoanApp(loanApp);
+//        return loanAppListService.saveLoanApp(loanApp);
+            loanAppListService.saveLoanApp(loanApp);
         }
-        throw new LoanApplicationsListNotFoundException("Loan application is not saved.");
+//        throw new LoanApplicationsListNotFoundException("Loan application is not saved.");
     }
 
     @GetMapping(value = "findLoanAppById")
@@ -50,8 +51,11 @@ public class LoanApplicationsListController {
             throw new LoanApplicationsListNotFoundException("Loan application is not exist in DB - UPDATE is failed.");
         }
         LoanApplicationsList loanApplicationsList = loanAppListMapper.mapToLoanApplicationsList(loansAppDto);
-        LoanApplicationsList savedLoanAppList = loanAppListService.saveLoanApp(loanApplicationsList);
-        return loanAppListMapper.matToLoanApplicationsListDto(savedLoanAppList);
+//        LoanApplicationsList savedLoanAppList = loanAppListService.saveLoanApp(loanApplicationsList);
+        loanAppListService.saveLoanApp(loanApplicationsList);
+
+//        return loanAppListMapper.matToLoanApplicationsListDto(savedLoanAppList);
+                return loanAppListMapper.matToLoanApplicationsListDto(loanApplicationsList);
     }
 
     @DeleteMapping(value = "removeLoanAppFromDB")
