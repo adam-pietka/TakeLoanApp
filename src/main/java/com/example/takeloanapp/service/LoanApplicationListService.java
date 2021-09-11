@@ -5,7 +5,6 @@ import com.example.takeloanapp.client.IbanClient;
 import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
 import com.example.takeloanapp.domain.LoanApplicationsList;
 import com.example.takeloanapp.domain.Loans;
-import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
 import com.example.takeloanapp.repository.LoanApplicationListRepository;
 import com.example.takeloanapp.validator.LoanApplicationValidator;
 import com.example.takeloanapp.validator.LoanConditionsValidator;
@@ -52,8 +51,10 @@ public class LoanApplicationListService {
         boolean isAccepted = loanApplicationValidator.validateBasicData(savedRecord)
                 && loanConditionsValidator.validLoanData(savedRecord);
 
+        Long loanId = null;
         if (isAccepted){
             Loans registeredLoans =  startPreparingSimulation(savedRecord);
+            loanId = registeredLoans.getId();
             savedRecord.setLoans(registeredLoans);
         } else {
             LOGGER.info("Loan application has NOT been accepted.");
@@ -68,6 +69,10 @@ public class LoanApplicationListService {
             throw new LoanApplicationsListNotFoundException("Loan Application is not saved in database");
         } else {
             LOGGER.info("Loan application has been saved in data base.");
+            if (loanId != null){
+                String generatedIban = loanService.generateAccountForRepayment(savedRecord.getId());
+                loanService.setGeneratedAccount(loanId, generatedIban);
+            }
         }
     }
 

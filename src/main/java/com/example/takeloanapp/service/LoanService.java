@@ -1,6 +1,7 @@
 package com.example.takeloanapp.service;
 
 import com.example.takeloanapp.calculator.LoanCalculator;
+import com.example.takeloanapp.client.IbanClient;
 import com.example.takeloanapp.controller.exception.LoanNotFoundException;
 import com.example.takeloanapp.domain.LoanApplicationsList;
 import com.example.takeloanapp.domain.Loans;
@@ -24,6 +25,9 @@ public class LoanService {
 
     @Autowired
     private LoanCalculator loanCalculator;
+
+    @Autowired
+    private IbanClient ibanClient;
 
     public Loans saveLoan(Loans loans){
         return loanRepository.save(loans) ;
@@ -75,5 +79,21 @@ public class LoanService {
         Loans savedRecord = saveLoan(allDataLoan);
         LOGGER.info("Starting fill data to new loan, id is: "  + savedRecord.getId());
         return savedRecord;
+    }
+
+    public String generateAccountForRepayment(Long appId){
+        String loanAppID = appId.toString();
+        if (loanAppID.length() > 8){
+            loanAppID = loanAppID.substring(0,8);
+        }
+        String generatedIban = ibanClient.getIbanCalculator(loanAppID).getIban();
+        return generatedIban ;
+    }
+
+    public void setGeneratedAccount(Long loanId, String ibanNumber){
+        Loans loansToSetAcc =  getLoanById(loanId).get();
+        loansToSetAcc.setLoanAccountNumber(ibanNumber);
+        saveLoan(loansToSetAcc);
+        LOGGER.info("For loan ID: " + loanId +  ", has ben set account number " + ibanNumber + ", it's repayment account.");
     }
 }
