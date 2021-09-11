@@ -2,13 +2,9 @@ package com.example.takeloanapp.controller;
 
 
 import com.example.takeloanapp.client.IbanClient;
-import com.example.takeloanapp.domain.dto.IbanValidatorDto;
+import com.example.takeloanapp.domain.dto.IbanDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/takeLoan/iban")
@@ -18,9 +14,14 @@ public class IbanValidatorController {
     private final IbanClient ibanClient;
 
     @GetMapping("getIbanValidator")
-    public void getIbanValidator(){
-        IbanValidatorDto ibanValidatorDtos = ibanClient.getIbanValidator();
-        System.out.println(ibanValidatorDtos + " *******************");
+    public IbanDto getIbanValidator(@RequestParam String ibanNumber){
+        IbanDto ibanDtos = ibanClient.getIbanValidator(ibanNumber);
+        return ibanDtos;
     }
 
+    @GetMapping("getIbanCalculator")
+    public IbanDto getIbanCalculator(@RequestParam String accNumber){
+        IbanDto ibanDtos = ibanClient.getIbanCalculator(accNumber);
+        return ibanDtos;
+    }
 }
