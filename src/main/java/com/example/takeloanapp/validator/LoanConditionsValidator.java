@@ -1,6 +1,8 @@
 package com.example.takeloanapp.validator;
 
+import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
 import com.example.takeloanapp.domain.LoanApplicationsList;
+import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ public class LoanConditionsValidator {
     private final BigDecimal MAX_AMOUNT = new BigDecimal("120000.00");
     private final int MIN_PERIOD = 10;
     private final int MAX_PERIOD = 120;
+
 
     public boolean validLoanData(LoanApplicationsList loanAppl){
         LOGGER.info("Starting checking loan condition like: period / minimum amount and maximum amount.");

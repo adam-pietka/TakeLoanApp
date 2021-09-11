@@ -5,6 +5,7 @@ import com.example.takeloanapp.domain.LoanApplicationsList;
 import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
 import com.example.takeloanapp.mapper.LoanApplicationsListMapper;
 import com.example.takeloanapp.service.LoanApplicationListService;
+import com.example.takeloanapp.validator.LoanApplicationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +23,13 @@ public class LoanApplicationsListController {
     @Autowired
     private LoanApplicationListService loanAppListService;
 
+    @Autowired
+    private LoanApplicationValidator loanApplicationValidator;
+
 
     @PostMapping(value = "registerLoanApplication", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void registerLoanApplication(@RequestBody LoanApplicationsListDto loanApplicationsListDto) throws LoanApplicationsListNotFoundException {
-        if (loanAppListService.checkThatAppHasMandatoryFields(loanApplicationsListDto)){
+        if (loanApplicationValidator.checkThatAppHasMandatoryFields(loanApplicationsListDto)){
         LoanApplicationsList loanApp = loanAppListMapper.mapToLoanApplicationsList(loanApplicationsListDto);
         loanAppListService.saveLoanApp(loanApp);
         }

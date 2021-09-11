@@ -15,13 +15,13 @@ public class IbanValidatorController {
 
     @GetMapping("getIbanValidator")
     public IbanDto getIbanValidator(@RequestParam String ibanNumber){
-        IbanDto ibanDtos = ibanClient.getIbanValidator(ibanNumber);
-        return ibanDtos;
+        IbanDto ibanValidated = ibanClient.getIbanValidator(ibanNumber);
+        return ibanValidated;
     }
 
     @GetMapping("getIbanCalculator")
     public IbanDto getIbanCalculator(@RequestParam String accNumber){
-        IbanDto ibanDtos = ibanClient.getIbanCalculator(accNumber);
-        return ibanDtos;
+        IbanDto ibanCalculated = ibanClient.getIbanCalculator(accNumber);
+        return ibanCalculated;
     }
 }

@@ -1,12 +1,11 @@
 package com.example.takeloanapp.service;
 
 import com.example.takeloanapp.calculator.LoanCalculator;
+import com.example.takeloanapp.client.IbanClient;
 import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
-import com.example.takeloanapp.domain.Customer;
 import com.example.takeloanapp.domain.LoanApplicationsList;
 import com.example.takeloanapp.domain.Loans;
 import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
-import com.example.takeloanapp.repository.CustomerRepository;
 import com.example.takeloanapp.repository.LoanApplicationListRepository;
 import com.example.takeloanapp.validator.LoanApplicationValidator;
 import com.example.takeloanapp.validator.LoanConditionsValidator;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +41,9 @@ public class LoanApplicationListService {
     @Autowired
     private LoanService loanService;
 
+    @Autowired
+    private IbanClient ibanClient;
+
     public void saveLoanApp(LoanApplicationsList loanApplicationsList) throws LoanApplicationsListNotFoundException{
         LOGGER.info("Starting saving loan application.");
         LoanApplicationsList savedRecord = loanApplicationsList;
@@ -52,7 +53,8 @@ public class LoanApplicationListService {
                 && loanConditionsValidator.validLoanData(savedRecord);
 
         if (isAccepted){
-            startPreparingSimulation(savedRecord);
+            Loans registeredLoans =  startPreparingSimulation(savedRecord);
+            savedRecord.setLoans(registeredLoans);
         } else {
             LOGGER.info("Loan application has NOT been accepted.");
             savedRecord.setDataOfClosedOfApplication(LocalDate.now());
@@ -98,45 +100,18 @@ public class LoanApplicationListService {
         return true;
     }
 
-    public boolean checkThatAppHasMandatoryFields(LoanApplicationsListDto loanAppListDto) throws LoanApplicationsListNotFoundException {
-        if (loanAppListDto.getCustomerId() == null){
-            throw new LoanApplicationsListNotFoundException("For loan application is missing mandatory field like Customer ID");
-        }
-        if (loanAppListDto.getLoanAmount() == null ||  loanAppListDto.getIncomeAmount() == null || loanAppListDto.getOtherLiabilities() == null){
-            throw new LoanApplicationsListNotFoundException("For loan application are missing fields, like: loan amount or income or liabilities.");
-        }
-        if (loanAppListDto.getEmployerAddress().isEmpty() || loanAppListDto.getEmployerName().isEmpty() || loanAppListDto.getEmployerPhoneNumber().isEmpty()){
-            throw new LoanApplicationsListNotFoundException("For loan application are missing fields, like: Employer name, phone number or address.");
-        }
-        return true;
-    }
-
-    public void startPreparingSimulation(LoanApplicationsList loanAppl){
+    public Loans startPreparingSimulation(LoanApplicationsList loanAppl){
         LOGGER.info("Loan application has been accepted, starting prepare SIMULATION for LOAN");
         BigDecimal monthlyInterestRate = loanCalculator.calculateMonthlyInterestRate(loanAppl);
         BigDecimal monthlyPayment =  loanCalculator.monthlyPayment(loanAppl, monthlyInterestRate);
         BigDecimal totalLoanAmount = loanCalculator.totalLoanPayments(loanAppl, monthlyPayment);
 
-        Loans newLoan = new Loans();
-        newLoan.setPeriodInMonth(loanAppl.getRepaymentPeriodInMonth());
-        newLoan.setStartDate(loanAppl.getDateOfRegistrationOfApplication());
-        newLoan.setEndDate(loanAppl.getDateOfRegistrationOfApplication().plusMonths(loanAppl.getRepaymentPeriodInMonth()));
-        newLoan.setDayOfInstalmentRepayment(loanAppl.getDateOfRegistrationOfApplication().getDayOfMonth());
-        newLoan.setLoanAmount(loanAppl.getLoanAmount());
-        newLoan.setLoanTotalInterest(totalLoanAmount.subtract(loanAppl.getLoanAmount()));
-        newLoan.setNextInstalmentInterestRepayment(monthlyInterestRate);
-        newLoan.setActive(true);
-        newLoan.setRegistrationDate(LocalDate.now());
-        newLoan.setCustomer(loanAppl.getCustomer());
-        newLoan.setClosed(false);
-
         boolean simulationAnswer =  loanApplicationValidator.simulationOfCredit(loanAppl, monthlyPayment);
         if (simulationAnswer){
             LOGGER.info("Simulation for Loan looks fine, so we can go to next step.");
-            Loans allDataLoan =  loanCalculator.setStaticDataToLoan(newLoan);
-            loanService.saveLoan(allDataLoan);
-        } else {
-            LOGGER.info("Simulation for Loan looks badly, loan at this parameters can not be accepted, sorry.");
+            return loanService.registerNewLoan(loanAppl, monthlyInterestRate,monthlyPayment, totalLoanAmount);
         }
+            LOGGER.info("Simulation for Loan looks badly, loan at this parameters can not be accepted, sorry.");
+        return null;
     }
 }

@@ -1,9 +1,13 @@
 package com.example.takeloanapp.validator;
 
+import com.example.takeloanapp.client.IbanClient;
+import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
 import com.example.takeloanapp.domain.Customer;
 import com.example.takeloanapp.domain.LoanApplicationsList;
+import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,6 +22,34 @@ public class LoanApplicationValidator {
     private final int MAX_AGE = 65;
     private final BigDecimal MIN_INCOME_AMOUNT = new BigDecimal("2000.00");
     private final BigDecimal PERCENT_TRESHOLD = new BigDecimal("0.50").setScale(3, RoundingMode.HALF_UP);
+
+    @Autowired
+    private IbanClient ibanClient;
+
+
+    public boolean checkThatAppHasMandatoryFields(LoanApplicationsListDto loanAppListDto) throws LoanApplicationsListNotFoundException {
+        if (loanAppListDto.getCustomerId() == null){
+            throw new LoanApplicationsListNotFoundException("For loan application is missing mandatory field like Customer ID");
+        }
+        if (loanAppListDto.getLoanAmount() == null ||  loanAppListDto.getIncomeAmount() == null || loanAppListDto.getOtherLiabilities() == null){
+            throw new LoanApplicationsListNotFoundException("For loan application are missing fields, like: loan amount or income or liabilities.");
+        }
+        if (loanAppListDto.getEmployerAddress().isEmpty() || loanAppListDto.getEmployerName().isEmpty() || loanAppListDto.getEmployerPhoneNumber().isEmpty()){
+            throw new LoanApplicationsListNotFoundException("For loan application are missing fields, like: Employer name, phone number or address.");
+        }
+        if(loanAppListDto.getRepaymentPeriodInMonth() == 0 ){
+            throw new LoanApplicationsListNotFoundException("For loan application is missing mandatory field like period of loan,  pls enter g Repayment Period In Month.");
+        }
+        if(loanAppListDto.getAccountNumberForPaymentOfLoan().isEmpty() || loanAppListDto.getAccountNumberForPaymentOfLoan().isBlank() ){
+            throw new LoanApplicationsListNotFoundException("Account number to withdrawal loan is NULL,  pls enter account number for payment loan.");
+        }
+        if(!ibanClient.getIbanValidator(loanAppListDto.getAccountNumberForPaymentOfLoan()).isValid()){
+            LOGGER.warn("IBAN is incorrect.");
+            throw new LoanApplicationsListNotFoundException("Account number to withdrawal loan is incorrect, it should be in IBAN format - starting PL.");
+        }
+        return true;
+    }
+
 
     public boolean validateBasicData(LoanApplicationsList loanAppl){
         LOGGER.info("Starting checking incom, T-recommendation...");
