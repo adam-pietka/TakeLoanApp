@@ -5,7 +5,6 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Table(name = "CUSTOMER")
@@ -23,17 +22,18 @@ public class Customer {
     private String nipNumber;
     private String idType;
     private String idNumber;
-    private String eMail;
+    private String mailAddress;
     private boolean isActive;
     private LocalDate registrationDate;
     private LocalDate closedDate;
     private List<Loans> loansList = new ArrayList<>();
     private List<LoanApplicationsList> loanApplicationsLists = new ArrayList<>();
+
+
     public Customer(){
     }
 
-
-    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String idType, String idNumber, String eMail) {
+    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String idType, String idNumber, String mailAddress) {
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
@@ -44,10 +44,10 @@ public class Customer {
         this.peselNumber = peselNumber;
         this.idType = idType;
         this.idNumber = idNumber;
-        this.eMail = eMail;
+        this.mailAddress = mailAddress;
     }
 
-    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String nipNumber, String eMail) {
+    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String nipNumber, String mailAddress) {
         this.name = name;
         this.surname = surname;
         this.phoneNumber = phoneNumber;
@@ -58,10 +58,10 @@ public class Customer {
         this.nipNumber = nipNumber;
         this.idType = idType;
         this.idNumber = idNumber;
-        this.eMail = eMail;
+        this.mailAddress = mailAddress;
     }
 
-    public Customer(Long id, String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String nipNumber, String idType, String idNumber, String eMail, boolean isActive, LocalDate registrationDate, LocalDate closedDate, List<Loans> loansList) {
+    public Customer(Long id, String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String nipNumber, String idType, String idNumber, String mailAddress, boolean isActive, LocalDate registrationDate, LocalDate closedDate, List<Loans> loansList) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -74,14 +74,14 @@ public class Customer {
         this.nipNumber = nipNumber;
         this.idType = idType;
         this.idNumber = idNumber;
-        this.eMail = eMail;
+        this.mailAddress = mailAddress;
         this.isActive = isActive;
         this.registrationDate = registrationDate;
         this.closedDate = closedDate;
         this.loansList = loansList;
     }
 
-    public Customer(Long id, String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String nipNumber, String idType, String idNumber, String eMail, boolean isActive, LocalDate registrationDate, LocalDate closedDate, List<Loans> loansList, List<LoanApplicationsList> loanApplicationsLists) {
+    public Customer(Long id, String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String nipNumber, String idType, String idNumber, String mailAddress, boolean isActive, LocalDate registrationDate, LocalDate closedDate, List<Loans> loansList, List<LoanApplicationsList> loanApplicationsLists) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -94,7 +94,7 @@ public class Customer {
         this.nipNumber = nipNumber;
         this.idType = idType;
         this.idNumber = idNumber;
-        this.eMail = eMail;
+        this.mailAddress = mailAddress;
         this.isActive = isActive;
         this.registrationDate = registrationDate;
         this.closedDate = closedDate;
@@ -154,8 +154,8 @@ public class Customer {
         return idNumber;
     }
 
-    public String getEmail() {
-        return eMail;
+    public String getMailAddress() {
+        return mailAddress;
     }
 
     public boolean isActive() {
@@ -232,8 +232,8 @@ public class Customer {
         this.idNumber = idNumber;
     }
 
-    public void setEmail(String eMail) {
-        this.eMail = eMail;
+    public void setMailAddress(String mailAddress) {
+        this.mailAddress = mailAddress;
     }
 
     public void setActive(boolean active) {

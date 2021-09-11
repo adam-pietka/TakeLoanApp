@@ -19,6 +19,7 @@ public class IbanClient {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IbanClient.class);
+    private static final String KNR_NUMBER = "80801001/";
     private final RestTemplate restTemplate;
     private final CoreConfiguration configuration;
 
@@ -38,7 +39,7 @@ public class IbanClient {
     }
 
     public IbanDto getIbanCalculator(String accNumber){
-        URI url = UriComponentsBuilder.fromHttpUrl(configuration.getIbanApiEndpoint() + "/calculate/PL/80801001/" + accNumber)
+        URI url = UriComponentsBuilder.fromHttpUrl(configuration.getIbanApiEndpoint() + "/calculate/PL/" + KNR_NUMBER + accNumber)
                 .build().encode().toUri() ;
 
         try {

@@ -21,11 +21,9 @@ public class LoanCalculator {
     private static String LOAN_PRODUCT_NAME = "Summer Promotion 2021.";
 
     public BigDecimal calculateMonthlyInterestRate(LoanApplicationsList loansAppList){
-        LOGGER.info("Starting calculating monthly interest rate. For application id: " + loansAppList.getId());
+        LOGGER.info("Starting calculating monthly interest rate for application.");
         BigDecimal monthlyInterestRate = ANNUAL_INTEREST_RATE.divide(BigDecimal.TEN,10,RoundingMode.CEILING) ;
-        System.out.println(" BIG DECIMAL: " +  monthlyInterestRate );
         LOGGER.info("End of calculating monthly interest rate - is equal: '" + monthlyInterestRate + "' .");
-//        monthlyPayment( loansAppList, monthlyInterestRate);
         return  monthlyInterestRate;
     }
 
@@ -39,7 +37,6 @@ public class LoanCalculator {
                 (1 - 1 / Math.pow( 1+ monthInterestRa, periodInMonth));
         BigDecimal monthlyPayment = new BigDecimal(result).setScale(2, RoundingMode.HALF_UP);
         LOGGER.info("End of calculating monthly payment - is equal: " + monthlyPayment);
-//        totalLoanPayments(loanApp, monthlyPayment);
         boolean newCreditRate =
                 loanApplicationValidator.simulationOfCredit(loanApp, monthlyPayment);
         LOGGER.info("End of simulation new credit rate is equal: " + newCreditRate);
@@ -57,6 +54,5 @@ public class LoanCalculator {
         loan.setProductName(LOAN_PRODUCT_NAME);
         loan.setLoanRate(ANNUAL_INTEREST_RATE);
         return responseLoan;
-
     }
 }

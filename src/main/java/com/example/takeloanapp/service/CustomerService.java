@@ -3,8 +3,9 @@ package com.example.takeloanapp.service;
 import com.example.takeloanapp.controller.exception.CustomerNotFoundException;
 import com.example.takeloanapp.domain.Customer;
 import com.example.takeloanapp.repository.CustomerRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Service
 public class CustomerService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerService.class);
 
     @Autowired
     private CustomerRepository repository;
@@ -23,6 +25,7 @@ public class CustomerService {
         savedCustomer.setRegistrationDate(LocalDate.now());
         savedCustomer.setActive(true);
         }
+        LOGGER.info("new customer has been saved in data base,"  + ", eMail: " + savedCustomer.getMailAddress());
         return repository.save(savedCustomer);
     }
 
