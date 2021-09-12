@@ -1,43 +1,46 @@
 package com.example.takeloanapp.scheduler;
 
-import com.example.takeloanapp.config.AdminConfig;
-import com.example.takeloanapp.domain.Mail;
-import com.example.takeloanapp.repository.LoanRepository;
-import com.example.takeloanapp.service.SimpleEmailService;
+import com.example.takeloanapp.mail.MailContentTemplates;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class EmailScheduler {
-    private final SimpleEmailService simpleEmailService;
-    private final LoanRepository loanRepository;
-    private final AdminConfig adminConfig;
-    private static final String SUBJECT = "Tasks: Once a day email";
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailScheduler.class);
 
-        @Scheduled(fixedDelay = 30000) // == 30s.
+    private final MailContentTemplates mailContentTemplates;
+    private final LoanRepaymentReminder loanRepaymentReminder;
+
+
+        @Scheduled(fixedDelay = 120_000) // == 30s. = 30_000
 //    @Scheduled(cron = "0 15 12 * * MON-FRI") //
     public void sendInformationEmail(){
-            System.out.println("********************************************" +
+            LOGGER.info("Staring....");
+            System.out.println("********************************************" + // in this place
                     "\nSHEDULER MESSAGE ************************************" +
                     "\n********************************************");
-//        simpleEmailService.send(new Mail( adminConfig.getAdminMail(),
-//                SUBJECT,
-//                messageContent(),
-//                null
-//                )
-//        );
     }
 
-    public String messageContent(){
-        String basicTextMessage = "Currently in database you got: ";
-        long size = loanRepository.count();
+    @Scheduled(fixedDelay = 600_000) // == 10s = 10_000.
+//    @Scheduled(cron = "0 1 9 * * MON-FRI") //
+    public void sendInformationAboutAllLoans(){
+        LOGGER.info("Staring send for: sendInformationAboutAllLoans");
+        mailContentTemplates.getNumbersOfAllLoans();
+    }
 
-        if (size <= 1){
-            return basicTextMessage + size + " loan.";
-        } else {
-            return basicTextMessage + size + " loans.";
-        }
+    @Scheduled(cron = "0 6 9 * * MON-FRI") //
+    public void sendInformationAboutAllCustomers(){
+        LOGGER.info("Staring send for: sendInformationAboutAllCustomers");
+        mailContentTemplates.getNumbersOfAllCustomers();
+    }
+
+    @Scheduled(cron = "0 15 8 * * *") //
+    public void sendRepaymentReminder(){
+            LOGGER.info("Staring send for: sendRepaymentReminder");
+            loanRepaymentReminder.repaymentInstalment();
     }
 }

@@ -5,6 +5,7 @@ import com.example.takeloanapp.client.IbanClient;
 import com.example.takeloanapp.controller.exception.LoanNotFoundException;
 import com.example.takeloanapp.domain.LoanApplicationsList;
 import com.example.takeloanapp.domain.Loans;
+import com.example.takeloanapp.mail.MailContentTemplates;
 import com.example.takeloanapp.repository.LoanRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,8 @@ public class LoanService {
 
     @Autowired
     private LoanCalculator loanCalculator;
+    @Autowired
+    private MailContentTemplates mailContentTemplates;
 
     @Autowired
     private IbanClient ibanClient;
@@ -78,13 +81,14 @@ public class LoanService {
 
         Loans savedRecord = saveLoan(allDataLoan);
         LOGGER.info("Starting fill data to new loan, id is: "  + savedRecord.getId());
+        mailContentTemplates.sendMailAboutNewLoan(allDataLoan);
         return savedRecord;
     }
 
     public String generateAccountForRepayment(Long appId){
         String loanAppID = appId.toString();
-        if (loanAppID.length() > 8){
-            loanAppID = loanAppID.substring(0,8);
+        if (loanAppID.length() > 10){
+            loanAppID = loanAppID.substring(0,10);
         }
         String generatedIban = ibanClient.getIbanCalculator(loanAppID).getIban();
         return generatedIban ;

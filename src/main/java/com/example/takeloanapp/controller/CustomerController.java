@@ -1,25 +1,16 @@
 package com.example.takeloanapp.controller;
 
-import com.example.takeloanapp.config.AdminConfig;
 import com.example.takeloanapp.controller.exception.CustomerNotFoundException;
 import com.example.takeloanapp.domain.Customer;
-import com.example.takeloanapp.domain.Mail;
 import com.example.takeloanapp.domain.dto.CustomerDto;
 import com.example.takeloanapp.mail.MailContentTemplates;
 import com.example.takeloanapp.mapper.CustomerMapper;
-import com.example.takeloanapp.repository.CustomerRepository;
 import com.example.takeloanapp.service.CustomerService;
-import com.example.takeloanapp.service.SimpleEmailService;
-import com.example.takeloanapp.validator.LoanApplicationValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -45,7 +36,7 @@ public class CustomerController {
         if (customerService.checkThatCustomerExistInDb(customer)){
             if (customerHasMandatoryData){
                 customerService.saveUser(customer);
-                mailContentTemplates.contentForNewCustomer(customer);
+                mailContentTemplates.sentMailForNewCustomer(customer);
             }
         }
     }
