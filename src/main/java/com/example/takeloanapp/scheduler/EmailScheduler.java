@@ -16,7 +16,7 @@ public class EmailScheduler {
     private final LoanRepaymentReminder loanRepaymentReminder;
 
 
-        @Scheduled(fixedDelay = 120_000) // == 30s. = 30_000
+        @Scheduled(fixedDelay = 600_000) // == 30s. = 30_000
 //    @Scheduled(cron = "0 15 12 * * MON-FRI") //
     public void sendInformationEmail(){
             LOGGER.info("Staring....");

@@ -1,7 +1,6 @@
 package com.example.takeloanapp.service;
 
 import com.example.takeloanapp.calculator.LoanCalculator;
-import com.example.takeloanapp.client.IbanClient;
 import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
 import com.example.takeloanapp.domain.LoanApplicationsList;
 import com.example.takeloanapp.domain.LoanCashFlow;
@@ -33,11 +32,7 @@ public class LoanApplicationListService {
     @Autowired
     private LoanCalculator loanCalculator;
     @Autowired
-    private CustomerService customerService;
-    @Autowired
     private LoanService loanService;
-    @Autowired
-    private IbanClient ibanClient;
     @Autowired
     private LoanCashFlowService loanCashFlowService;
 
@@ -45,6 +40,7 @@ public class LoanApplicationListService {
         LOGGER.info("Starting saving loan application.");
         LoanApplicationsList savedRecord = loanApplicationsList;
         if (savedRecord.getId() != null){
+            disbursementOfLoan(savedRecord);
             loanAppRepository.save(savedRecord);
         } else {
             savedRecord.setDateOfRegistrationOfApplication(LocalDate.now());
@@ -123,16 +119,20 @@ public class LoanApplicationListService {
     }
 
     public void disbursementOfLoan(LoanApplicationsList loanAppl) throws LoanApplicationsListNotFoundException{
-        if (loanAppl.isPayoutsDone()){ throw new LoanApplicationsListNotFoundException("Loan has been ");        }
         LoanApplicationsList disbursementLoan = loanAppl;
-        disbursementLoan.setPayoutsDone(true);
-        disbursementLoan.setDateOfPayout(LocalDate.now());
+        LoanApplicationsList beforePut = loanAppRepository.findById(loanAppl.getId()).get();
+        if (!beforePut.isPayoutsDone() && loanAppl.isPayoutsDone()) {
+            LOGGER.info("Disbursement of loan is starting...");
+            disbursementLoan.setPayoutsDone(true);
+            disbursementLoan.setDateOfPayout(LocalDate.now());
 
-        LoanCashFlow cashDisbursement = new LoanCashFlow();
-        cashDisbursement.setLoans(disbursementLoan.getLoans());
-        cashDisbursement.setDisbursement(true);
-        cashDisbursement.setAccountNumber(disbursementLoan.getAccountNumberForPaymentOfLoan());
-        cashDisbursement.setTransactionTimeStamp(LocalDateTime.now());
-        loanCashFlowService.saveTransaction(cashDisbursement);
+            LoanCashFlow cashDisbursement = new LoanCashFlow();
+            cashDisbursement.setRepaymentAmount(disbursementLoan.getLoanAmount());
+            cashDisbursement.setLoans(disbursementLoan.getLoans());
+            cashDisbursement.setDisbursement(true);
+            cashDisbursement.setAccountNumber(disbursementLoan.getAccountNumberForPaymentOfLoan());
+            cashDisbursement.setTransactionTimeStamp(LocalDateTime.now());
+            loanCashFlowService.saveTransaction(cashDisbursement);
+        }
     }
 }
