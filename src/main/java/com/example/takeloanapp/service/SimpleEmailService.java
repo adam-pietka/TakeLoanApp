@@ -53,7 +53,7 @@ public class SimpleEmailService {
                 .ifPresent(isCc -> notificationHistory.setNotificatinCcReceiver(mail.getToCc()));
         notificationService.saveNotification(notificationHistory);
 
-        LOGGER.info("processing main in progress....");
+        LOGGER.info("processing mail in progress....");
         return mailMessage;
     }
 }

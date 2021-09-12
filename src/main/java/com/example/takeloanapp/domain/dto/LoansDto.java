@@ -35,6 +35,7 @@ public class LoansDto {
     private Long customerId;
     private String loanAccountNumber;
     private boolean isClosed;
+    private List<Long> loanCashFlowId = new ArrayList<>();
 
 
     @Override

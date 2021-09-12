@@ -20,7 +20,7 @@ public class NotificationHistoryService {
     public List<NotificationHistory> getAllNotificationHistory(){
         return notificationRepository.findAll();
     }
-    public void deleteNotyficationById(Long notificationId){
+    public void deleteNotificationById(Long notificationId){
         notificationRepository.deleteById(notificationId);
     }
 

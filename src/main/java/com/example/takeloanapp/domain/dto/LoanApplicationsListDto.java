@@ -1,6 +1,7 @@
 package com.example.takeloanapp.domain.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +10,7 @@ import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Data
 public class LoanApplicationsListDto {
 
     private Long id;
@@ -28,9 +29,11 @@ public class LoanApplicationsListDto {
     private LocalDate dateOfRegistrationOfApplication;
     private LocalDate dataOfClosedOfApplication;
     private String accountNumberForPaymentOfLoan;
-    private boolean isPayouts;
+    private boolean isPayoutsDone;
     private LocalDate dateOfPayout;
     private boolean isClosed;
+
+
 
 
     @Override

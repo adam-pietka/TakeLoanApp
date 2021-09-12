@@ -25,6 +25,6 @@ public interface CustomerRepository extends CrudRepository<Customer, Long> {
 
     Optional<Customer> findByPeselNumber(String peselNumber);
 
-    Optional<Customer> findByIdNumber(String peselNumber);
+    Optional<Customer> findByIdNumber(String idNumber);
 
 }

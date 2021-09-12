@@ -4,6 +4,7 @@ import com.example.takeloanapp.calculator.LoanCalculator;
 import com.example.takeloanapp.client.IbanClient;
 import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
 import com.example.takeloanapp.domain.LoanApplicationsList;
+import com.example.takeloanapp.domain.LoanCashFlow;
 import com.example.takeloanapp.domain.Loans;
 import com.example.takeloanapp.repository.LoanApplicationListRepository;
 import com.example.takeloanapp.validator.LoanApplicationValidator;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,57 +26,57 @@ public class LoanApplicationListService {
 
     @Autowired
     private LoanApplicationListRepository loanAppRepository;
-
     @Autowired
     private LoanApplicationValidator loanApplicationValidator;
-
     @Autowired
     private LoanConditionsValidator loanConditionsValidator;
-
     @Autowired
     private LoanCalculator loanCalculator;
-
     @Autowired
     private CustomerService customerService;
-
     @Autowired
     private LoanService loanService;
-
     @Autowired
     private IbanClient ibanClient;
+    @Autowired
+    private LoanCashFlowService loanCashFlowService;
 
     public void saveLoanApp(LoanApplicationsList loanApplicationsList) throws LoanApplicationsListNotFoundException{
         LOGGER.info("Starting saving loan application.");
         LoanApplicationsList savedRecord = loanApplicationsList;
-        savedRecord.setDateOfRegistrationOfApplication(LocalDate.now());
-
-        boolean isAccepted = loanApplicationValidator.validateBasicData(savedRecord)
-                && loanConditionsValidator.validLoanData(savedRecord);
-
-        Long loanId = null;
-        if (isAccepted){
-            Loans registeredLoans =  startPreparingSimulation(savedRecord);
-            loanId = registeredLoans.getId();
-            savedRecord.setLoans(registeredLoans);
+        if (savedRecord.getId() != null){
+            loanAppRepository.save(savedRecord);
         } else {
-            LOGGER.info("Loan application has NOT been accepted.");
-            savedRecord.setDataOfClosedOfApplication(LocalDate.now());
-            savedRecord.setClosed(true);
-        }
-        savedRecord.setApplicationAccepted(isAccepted);
+            savedRecord.setDateOfRegistrationOfApplication(LocalDate.now());
+            boolean isAccepted = loanApplicationValidator.validateBasicData(savedRecord)
+                    && loanConditionsValidator.validLoanData(savedRecord);
+            savedRecord.setApplicationAccepted(isAccepted);
 
-        loanAppRepository.save(savedRecord);
-        if (loanAppRepository.findById(savedRecord.getId()).isEmpty()){
-            LOGGER.error("LOAN APPLICATION HAS NOT BEEN SAVED IN DATE BASE.");
-            throw new LoanApplicationsListNotFoundException("Loan Application is not saved in database");
-        } else {
-            LOGGER.info("Loan application has been saved in data base.");
-            if (loanId != null){
-                String generatedIban = loanService.generateAccountForRepayment(savedRecord.getId());
-                loanService.setGeneratedAccount(loanId, generatedIban);
+            Long loanId = null;
+            if (isAccepted) {
+                Loans registeredLoans = startPreparingSimulation(savedRecord);
+                loanId = registeredLoans.getId();
+                savedRecord.setLoans(registeredLoans);
+            } else {
+                LOGGER.info("Loan application has NOT been accepted.");
+                savedRecord.setDataOfClosedOfApplication(LocalDate.now());
+                savedRecord.setClosed(true);
+            }
+
+            loanAppRepository.save(savedRecord);
+            if (loanAppRepository.findById(savedRecord.getId()).isEmpty()) {
+                LOGGER.error("LOAN APPLICATION HAS NOT BEEN SAVED IN DATE BASE.");
+                throw new LoanApplicationsListNotFoundException("Loan Application is not saved in database");
+            } else {
+                LOGGER.info("Loan application has been saved in data base.");
+                if (loanId != null) {
+                    String generatedIban = loanService.generateAccountForRepayment(savedRecord.getId());
+                    loanService.setGeneratedAccount(loanId, generatedIban);
+                }
             }
         }
     }
+
 
     public Optional<LoanApplicationsList> getLoanApplicationById(Long loanAppId)throws LoanApplicationsListNotFoundException {
         if (checkByIdThatLoanAppIsExist(loanAppId)) {
@@ -118,5 +120,19 @@ public class LoanApplicationListService {
         }
             LOGGER.info("Simulation for Loan looks badly, loan at this parameters can not be accepted, sorry.");
         return null;
+    }
+
+    public void disbursementOfLoan(LoanApplicationsList loanAppl) throws LoanApplicationsListNotFoundException{
+        if (loanAppl.isPayoutsDone()){ throw new LoanApplicationsListNotFoundException("Loan has been ");        }
+        LoanApplicationsList disbursementLoan = loanAppl;
+        disbursementLoan.setPayoutsDone(true);
+        disbursementLoan.setDateOfPayout(LocalDate.now());
+
+        LoanCashFlow cashDisbursement = new LoanCashFlow();
+        cashDisbursement.setLoans(disbursementLoan.getLoans());
+        cashDisbursement.setDisbursement(true);
+        cashDisbursement.setAccountNumber(disbursementLoan.getAccountNumberForPaymentOfLoan());
+        cashDisbursement.setTransactionTimeStamp(LocalDateTime.now());
+        loanCashFlowService.saveTransaction(cashDisbursement);
     }
 }

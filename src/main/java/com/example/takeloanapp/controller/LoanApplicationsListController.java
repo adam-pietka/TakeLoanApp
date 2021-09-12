@@ -49,9 +49,6 @@ public class LoanApplicationsListController {
 
     @PutMapping(value = "updateLoanApp")
     public LoanApplicationsListDto updateLoan(@RequestBody LoanApplicationsListDto loansAppDto ) throws LoanApplicationsListNotFoundException {
-        if (!loanAppListService.checkByIdThatLoanAppIsExist(loansAppDto.getId())){
-            throw new LoanApplicationsListNotFoundException("Loan application is not exist in DB - UPDATE is failed.");
-        }
         LoanApplicationsList loanApplicationsList = loanAppListMapper.mapToLoanApplicationsList(loansAppDto);
         loanAppListService.saveLoanApp(loanApplicationsList);
         return loanAppListMapper.matToLoanApplicationsListDto(loanApplicationsList);

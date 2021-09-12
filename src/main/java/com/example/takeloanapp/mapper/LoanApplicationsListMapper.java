@@ -38,7 +38,7 @@ public class LoanApplicationsListMapper {
                 loanApplicationsListDto.getDateOfRegistrationOfApplication(),
                 loanApplicationsListDto.getDataOfClosedOfApplication(),
                 loanApplicationsListDto.getAccountNumberForPaymentOfLoan(),
-                loanApplicationsListDto.isPayouts(),
+                loanApplicationsListDto.isPayoutsDone(),
                 loanApplicationsListDto.getDateOfPayout(),
                 loanApplicationsListDto.isClosed());
     }
@@ -62,7 +62,7 @@ public class LoanApplicationsListMapper {
                 loanApplicationsList.getDateOfRegistrationOfApplication(),
                 loanApplicationsList.getDataOfClosedOfApplication(),
                 loanApplicationsList.getAccountNumberForPaymentOfLoan(),
-                loanApplicationsList.isPayouts(),
+                loanApplicationsList.isPayoutsDone(),
                 loanApplicationsList.getDateOfPayout(),
                 loanApplicationsList.isClosed()
 

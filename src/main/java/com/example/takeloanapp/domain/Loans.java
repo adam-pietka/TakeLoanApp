@@ -1,6 +1,5 @@
 package com.example.takeloanapp.domain;
 
-import com.example.takeloanapp.domain.Customer;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
@@ -33,11 +32,12 @@ public class Loans {
     private Customer customer;
     private String loanAccountNumber;
     private boolean isClosed;
+    private List<LoanCashFlow> loanCashFlows = new ArrayList<>();
 
     public Loans() {
     }
 
-    public Loans(String productName, int periodInMonth, LocalDate startDate, LocalDate endDate, int dayOfInstalmentRepayment, BigDecimal loanAmount, BigDecimal loanRate, BigDecimal loanTotalInterest, BigDecimal nextInstalmentInterestRepayment, BigDecimal nextInstalmentCapitalRepayment, boolean isActive, LocalDate registrationDate, boolean hasArrears, int counterDaysArrears, BigDecimal penaltyInterest, BigDecimal penaltyInterestAmount, Customer customer, String loanAccountNumber, boolean isClosed) {
+    public Loans(String productName, int periodInMonth, LocalDate startDate, LocalDate endDate, int dayOfInstalmentRepayment, BigDecimal loanAmount, BigDecimal loanRate, BigDecimal loanTotalInterest, BigDecimal nextInstalmentInterestRepayment, BigDecimal nextInstalmentCapitalRepayment, boolean isActive, LocalDate registrationDate, boolean hasArrears, int counterDaysArrears, BigDecimal penaltyInterest, BigDecimal penaltyInterestAmount, Customer customer, String loanAccountNumber, boolean isClosed, List<LoanCashFlow> loanCashFlows) {
         this.productName = productName;
         this.periodInMonth = periodInMonth;
         this.startDate = startDate;
@@ -57,9 +57,10 @@ public class Loans {
         this.customer = customer;
         this.loanAccountNumber = loanAccountNumber;
         this.isClosed = isClosed;
+        this.loanCashFlows = loanCashFlows;
     }
 
-    public Loans(Long id,  String productName, int periodInMonth, LocalDate startDate, LocalDate endDate, int dayOfInstalmentRepayment, BigDecimal loanAmount, BigDecimal loanRate, BigDecimal loanTotalInterest, BigDecimal nextInstalmentInterestRepayment, BigDecimal nextInstalmentCapitalRepayment, boolean isActive, LocalDate registrationDate, boolean hasArrears, int counterDaysArrears, BigDecimal penaltyInterest, BigDecimal penaltyInterestAmount, Customer customer, String loanAccountNumber, boolean isClosed) {
+    public Loans(Long id, String productName, int periodInMonth, LocalDate startDate, LocalDate endDate, int dayOfInstalmentRepayment, BigDecimal loanAmount, BigDecimal loanRate, BigDecimal loanTotalInterest, BigDecimal nextInstalmentInterestRepayment, BigDecimal nextInstalmentCapitalRepayment, boolean isActive, LocalDate registrationDate, boolean hasArrears, int counterDaysArrears, BigDecimal penaltyInterest, BigDecimal penaltyInterestAmount, Customer customer, String loanAccountNumber, boolean isClosed, List<LoanCashFlow> loanCashFlows) {
         this.id = id;
         this.productName = productName;
         this.periodInMonth = periodInMonth;
@@ -80,6 +81,7 @@ public class Loans {
         this.customer = customer;
         this.loanAccountNumber = loanAccountNumber;
         this.isClosed = isClosed;
+        this.loanCashFlows = loanCashFlows;
     }
 
     @Id
@@ -168,6 +170,15 @@ public class Loans {
         return isClosed;
     }
 
+    @OneToMany(
+            targetEntity = LoanCashFlow.class,
+            mappedBy = "loans",
+            fetch = FetchType.LAZY
+    )
+    public List<LoanCashFlow> getLoanCashFlows() {
+        return loanCashFlows;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -248,4 +259,7 @@ public class Loans {
         isClosed = closed;
     }
 
+    public void setLoanCashFlows(List<LoanCashFlow> loanCashFlows) {
+        this.loanCashFlows = loanCashFlows;
+    }
 }

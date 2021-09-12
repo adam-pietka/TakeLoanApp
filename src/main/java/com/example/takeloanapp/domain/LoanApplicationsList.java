@@ -26,14 +26,14 @@ public class LoanApplicationsList {
     private LocalDate dateOfRegistrationOfApplication;
     private LocalDate dataOfClosedOfApplication;
     private String accountNumberForPaymentOfLoan;
-    private boolean isPayouts;
+    private boolean isPayoutsDone;
     private LocalDate dateOfPayout;
     private boolean isClosed;
 
     public LoanApplicationsList() {
     }
 
-    public LoanApplicationsList(Long id, Customer customer, Loans loans, String employmentForm, BigDecimal incomeAmount, String employerName, String employerNipNumber, String employerAddress, String employerPhoneNumber, BigDecimal otherLiabilities, BigDecimal loanAmount, int repaymentPeriodInMonth, boolean isApplicationAccepted, LocalDate dateOfRegistrationOfApplication, LocalDate dataOfClosedOfApplication, String accountNumberForPaymentOfLoan, boolean isPayouts, LocalDate dateOfPayout, boolean isClosed) {
+    public LoanApplicationsList(Long id, Customer customer, Loans loans, String employmentForm, BigDecimal incomeAmount, String employerName, String employerNipNumber, String employerAddress, String employerPhoneNumber, BigDecimal otherLiabilities, BigDecimal loanAmount, int repaymentPeriodInMonth, boolean isApplicationAccepted, LocalDate dateOfRegistrationOfApplication, LocalDate dataOfClosedOfApplication, String accountNumberForPaymentOfLoan, boolean isPayoutsDone, LocalDate dateOfPayout, boolean isClosed) {
         this.id = id;
         this.customer = customer;
         this.loans = loans;
@@ -50,12 +50,12 @@ public class LoanApplicationsList {
         this.dateOfRegistrationOfApplication = dateOfRegistrationOfApplication;
         this.dataOfClosedOfApplication = dataOfClosedOfApplication;
         this.accountNumberForPaymentOfLoan = accountNumberForPaymentOfLoan;
-        this.isPayouts = isPayouts;
+        this.isPayoutsDone = isPayoutsDone;
         this.dateOfPayout = dateOfPayout;
         this.isClosed = isClosed;
     }
 
-    public LoanApplicationsList(Customer customer, Loans loans, String employmentForm, BigDecimal incomeAmount, String employerName, String employerNipNumber, String employerAddress, String employerPhoneNumber, BigDecimal otherLiabilities, BigDecimal loanAmount, int repaymentPeriodInMonth, boolean isApplicationAccepted, LocalDate dateOfRegistrationOfApplication, LocalDate dataOfClosedOfApplication, String accountNumberForPaymentOfLoan, boolean isPayouts, LocalDate dateOfPayout, boolean isClosed) {
+    public LoanApplicationsList(Customer customer, Loans loans, String employmentForm, BigDecimal incomeAmount, String employerName, String employerNipNumber, String employerAddress, String employerPhoneNumber, BigDecimal otherLiabilities, BigDecimal loanAmount, int repaymentPeriodInMonth, boolean isApplicationAccepted, LocalDate dateOfRegistrationOfApplication, LocalDate dataOfClosedOfApplication, String accountNumberForPaymentOfLoan, boolean isPayoutsDone, LocalDate dateOfPayout, boolean isClosed) {
         this.customer = customer;
         this.loans = loans;
         this.employmentForm = employmentForm;
@@ -71,12 +71,12 @@ public class LoanApplicationsList {
         this.dateOfRegistrationOfApplication = dateOfRegistrationOfApplication;
         this.dataOfClosedOfApplication = dataOfClosedOfApplication;
         this.accountNumberForPaymentOfLoan = accountNumberForPaymentOfLoan;
-        this.isPayouts = isPayouts;
+        this.isPayoutsDone = isPayoutsDone;
         this.dateOfPayout = dateOfPayout;
         this.isClosed = isClosed;
     }
 
-    public LoanApplicationsList(Customer customer, String employmentForm, BigDecimal incomeAmount, String employerName, String employerNipNumber, String employerAddress, String employerPhoneNumber, BigDecimal otherLiabilities, BigDecimal loanAmount, int repaymentPeriodInMonth, boolean isApplicationAccepted, LocalDate dateOfRegistrationOfApplication, LocalDate dataOfClosedOfApplication, String accountNumberForPaymentOfLoan, boolean isPayouts, LocalDate dateOfPayout, boolean isClosed) {
+    public LoanApplicationsList(Customer customer, String employmentForm, BigDecimal incomeAmount, String employerName, String employerNipNumber, String employerAddress, String employerPhoneNumber, BigDecimal otherLiabilities, BigDecimal loanAmount, int repaymentPeriodInMonth, boolean isApplicationAccepted, LocalDate dateOfRegistrationOfApplication, LocalDate dataOfClosedOfApplication, String accountNumberForPaymentOfLoan, boolean isPayoutsDone, LocalDate dateOfPayout, boolean isClosed) {
         this.customer = customer;
         this.employmentForm = employmentForm;
         this.incomeAmount = incomeAmount;
@@ -91,7 +91,7 @@ public class LoanApplicationsList {
         this.dateOfRegistrationOfApplication = dateOfRegistrationOfApplication;
         this.dataOfClosedOfApplication = dataOfClosedOfApplication;
         this.accountNumberForPaymentOfLoan = accountNumberForPaymentOfLoan;
-        this.isPayouts = isPayouts;
+        this.isPayoutsDone = isPayoutsDone;
         this.dateOfPayout = dateOfPayout;
         this.isClosed = isClosed;
     }
@@ -169,8 +169,8 @@ public class LoanApplicationsList {
         return accountNumberForPaymentOfLoan;
     }
 
-    public boolean isPayouts() {
-        return isPayouts;
+    public boolean isPayoutsDone() {
+        return isPayoutsDone;
     }
 
     public LocalDate getDateOfPayout() {
@@ -245,8 +245,8 @@ public class LoanApplicationsList {
         this.accountNumberForPaymentOfLoan = accountNumberForPaymentOfLoan;
     }
 
-    public void setPayouts(boolean payouts) {
-        isPayouts = payouts;
+    public void setPayoutsDone(boolean payoutsDone) {
+        isPayoutsDone = payoutsDone;
     }
 
     public void setDateOfPayout(LocalDate dateOfPayout) {

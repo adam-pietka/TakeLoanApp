@@ -16,15 +16,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/takeLoan/customers")
 public class CustomerController {
-    private static final String SUBJECT = "Dear customer, we just has been created in our company.";
-    private static final String MESSAGE = "Dear customer, \nWelcome in our company.\nBest regards,\nBest4 IT";
-
     @Autowired
     private MailContentTemplates mailContentTemplates;
-
     @Autowired
     private CustomerMapper mapper;
-
     @Autowired
     private CustomerService customerService;
 
