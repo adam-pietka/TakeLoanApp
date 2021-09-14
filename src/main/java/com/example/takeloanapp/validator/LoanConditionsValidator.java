@@ -1,8 +1,6 @@
 package com.example.takeloanapp.validator;
 
-import com.example.takeloanapp.controller.exception.LoanApplicationsListNotFoundException;
 import com.example.takeloanapp.domain.LoanApplicationsList;
-import com.example.takeloanapp.domain.dto.LoanApplicationsListDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

@@ -133,6 +133,7 @@ public class LoanApplicationListService {
             cashDisbursement.setAccountNumber(disbursementLoan.getAccountNumberForPaymentOfLoan());
             cashDisbursement.setTransactionTimeStamp(LocalDateTime.now());
             loanCashFlowService.saveTransaction(cashDisbursement);
+            loanService.setLoanActiveForDisbursement(loanAppl.getLoans().getId());
         }
     }
 }

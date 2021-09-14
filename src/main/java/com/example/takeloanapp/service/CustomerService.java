@@ -22,8 +22,8 @@ public class CustomerService {
     public Customer saveUser(Customer customer){
         Customer savedCustomer = customer;
         if (customer.getRegistrationDate() == null){
-        savedCustomer.setRegistrationDate(LocalDate.now());
-        savedCustomer.setActive(true);
+            savedCustomer.setRegistrationDate(LocalDate.now());
+            savedCustomer.setActive(true);
         }
         LOGGER.info("new customer has been saved in data base,"  + ", eMail: " + savedCustomer.getMailAddress());
         return repository.save(savedCustomer);
@@ -55,26 +55,6 @@ public class CustomerService {
         return repository.findByIdNumber(idNumber);
     }
 
-    public  boolean validateCustomerDataBeforeSaveInDb(Customer customer) throws  CustomerNotFoundException{
-
-        if (customer.getName().isEmpty() || customer.getName().isBlank() || customer.getSurname().isEmpty() ||  customer.getSurname().isBlank() || customer.getSurname() == null){
-            throw new CustomerNotFoundException("Customer has not fill all mandatory fields, like: NAME.");
-        }
-        if (customer.getPeselNumber().isEmpty() || customer.getPeselNumber().isBlank()){
-            throw new CustomerNotFoundException("Customer has not fill all mandatory fields, like: PESEL NUMBER.");
-        }
-        if (customer.getIdType().isEmpty() || customer.getIdType().isBlank()){
-            throw new CustomerNotFoundException("Customer has not fill all mandatory fields, like ID TYPE.");
-        }
-        if (customer.getIdNumber().isEmpty() || customer.getIdNumber().isBlank()){
-            throw new CustomerNotFoundException("Customer has not fill all mandatory fields, like ID NUMBER.");
-        }
-        if (customer.getPhoneNumber().isEmpty() || customer.getPhoneNumber().isBlank()){
-            throw new CustomerNotFoundException("Customer has not fill all mandatory fields, like PHONE NUMBER.");
-        }
-
-        return true;
-    }
 
     public boolean checkThatCustomerExistInDb(Customer customer) throws  CustomerNotFoundException{
         if (repository.findByPeselNumber(customer.getPeselNumber()).isPresent()){

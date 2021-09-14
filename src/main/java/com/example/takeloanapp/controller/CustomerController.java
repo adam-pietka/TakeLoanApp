@@ -6,6 +6,7 @@ import com.example.takeloanapp.domain.dto.CustomerDto;
 import com.example.takeloanapp.mail.MailContentTemplates;
 import com.example.takeloanapp.mapper.CustomerMapper;
 import com.example.takeloanapp.service.CustomerService;
+import com.example.takeloanapp.validator.CustomerDataValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -22,12 +23,13 @@ public class CustomerController {
     private CustomerMapper mapper;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private CustomerDataValidator customerDataValidator;
 
     @PostMapping(value = "createCustomer", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void createCustomer(@RequestBody CustomerDto customerDto) throws CustomerNotFoundException {
         Customer customer = mapper.mapToCustomer(customerDto);
-        boolean customerHasMandatoryData = customerService.validateCustomerDataBeforeSaveInDb(customer);
-
+        boolean customerHasMandatoryData = customerDataValidator.validateCustomerDataBeforeSaveInDb(customer);
         if (customerService.checkThatCustomerExistInDb(customer)){
             if (customerHasMandatoryData){
                 customerService.saveUser(customer);

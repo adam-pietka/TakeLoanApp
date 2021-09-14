@@ -21,9 +21,7 @@ public class LoanRepaymentReminder {
         List<Loans> loansList =  loanService.getAllLoans();
         loansList.stream()
                 .filter(loans -> loans.getDayOfInstalmentRepayment() == LocalDate.now().plusDays(1).getDayOfMonth())
-                .filter(loans -> loans.isActive())
-                .forEach(i-> {
-                    mailTemplates.sentRepaymentReminder(i.getCustomer().getMailAddress());
-                });
+                .filter(Loans::isActive)
+                .forEach(i-> mailTemplates.sentRepaymentReminder(i.getCustomer().getMailAddress()));
     }
 }

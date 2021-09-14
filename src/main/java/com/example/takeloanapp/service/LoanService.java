@@ -66,14 +66,12 @@ public class LoanService {
         LOGGER.info("Starting fill data to new loan.");
         Loans newLoan = new Loans();
         newLoan.setPeriodInMonth(loanAppl.getRepaymentPeriodInMonth());
-        newLoan.setStartDate(loanAppl.getDateOfRegistrationOfApplication());
         newLoan.setEndDate(loanAppl.getDateOfRegistrationOfApplication().plusMonths(loanAppl.getRepaymentPeriodInMonth()));
         newLoan.setDayOfInstalmentRepayment(loanAppl.getDateOfRegistrationOfApplication().getDayOfMonth());
         newLoan.setLoanAmount(loanAppl.getLoanAmount());
         newLoan.setLoanTotalInterest(totalLoanAmount.subtract(loanAppl.getLoanAmount()));
         newLoan.setNextInstalmentInterestRepayment(monthlyInterestRate);
         newLoan.setNextInstalmentCapitalRepayment(monthlyPayment.subtract(monthlyInterestRate));
-        newLoan.setActive(true);
         newLoan.setRegistrationDate(LocalDate.now());
         newLoan.setCustomer(loanAppl.getCustomer());
         newLoan.setClosed(false);
@@ -99,5 +97,12 @@ public class LoanService {
         loansToSetAcc.setLoanAccountNumber(ibanNumber);
         saveLoan(loansToSetAcc);
         LOGGER.info("For loan ID: " + loanId +  ", has ben set account number " + ibanNumber + ", it's repayment account.");
+    }
+
+    public void setLoanActiveForDisbursement(Long loanId){
+        Optional<Loans> loansToActivated = loanRepository.findById(loanId);
+        loansToActivated.get().setActive(true);
+        loansToActivated.get().setStartDate(LocalDate.now());
+        LOGGER.info("LOAN id: " + loanId + " has been activated.");
     }
 }

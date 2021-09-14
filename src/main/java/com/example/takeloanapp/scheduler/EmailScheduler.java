@@ -15,18 +15,8 @@ public class EmailScheduler {
     private final MailContentTemplates mailContentTemplates;
     private final LoanRepaymentReminder loanRepaymentReminder;
 
-
-        @Scheduled(fixedDelay = 600_000) // == 30s. = 30_000
-//    @Scheduled(cron = "0 15 12 * * MON-FRI") //
-    public void sendInformationEmail(){
-            LOGGER.info("Staring....");
-            System.out.println("********************************************" + // in this place
-                    "\nSHEDULER MESSAGE ************************************" +
-                    "\n********************************************");
-    }
-
-    @Scheduled(fixedDelay = 600_000) // == 10s = 10_000.
-//    @Scheduled(cron = "0 1 9 * * MON-FRI") //
+//    @Scheduled(fixedDelay = 600_000) // == 10s = 10_000.
+    @Scheduled(cron = "0 1 9 * * MON-FRI") //
     public void sendInformationAboutAllLoans(){
         LOGGER.info("Staring send for: sendInformationAboutAllLoans");
         mailContentTemplates.getNumbersOfAllLoans();

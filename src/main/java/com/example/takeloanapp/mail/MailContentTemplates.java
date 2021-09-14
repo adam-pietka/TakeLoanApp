@@ -9,7 +9,6 @@ import com.example.takeloanapp.repository.LoanRepository;
 import com.example.takeloanapp.service.SimpleEmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.time.LocalDate;
 
 @Component
@@ -68,11 +67,11 @@ public class MailContentTemplates {
                 basicTextMessage, null));
     }
 
-    public void sentRepaymentReminder(String mailAddresse){
+    public void sentRepaymentReminder(String mailAddress){
         String messageContent = "Hello," +
                 "\n\nWe are glad that you are sill with us, we want to remind you about incoming instalment repayment." +
-                "\nNext repayment will be at " + LocalDate.now().plusDays(1).toString() + BEST_REGARDS;
-        emailService.send(new Mail(mailAddresse, SUBJECT_REPAYMENT_REMINDER,
+                "\nNext repayment will be at " + LocalDate.now().plusDays(1) + BEST_REGARDS;
+        emailService.send(new Mail(mailAddress, SUBJECT_REPAYMENT_REMINDER,
                 messageContent,null));
 
     }

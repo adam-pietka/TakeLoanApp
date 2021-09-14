@@ -12,10 +12,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class LoanApplicationsListMapper {
-
     @Autowired
     private CustomerRepository customerRepository;
-
     @Autowired
     private LoanRepository loanRepository;
 

@@ -1,7 +1,6 @@
 package com.example.takeloanapp.domain;
 
 import com.sun.istack.NotNull;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 

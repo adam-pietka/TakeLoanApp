@@ -1,7 +1,6 @@
 package com.example.takeloanapp.domain;
 
 import com.sun.istack.NotNull;
-
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,29 +34,6 @@ public class Loans {
     private List<LoanCashFlow> loanCashFlows = new ArrayList<>();
 
     public Loans() {
-    }
-
-    public Loans(String productName, int periodInMonth, LocalDate startDate, LocalDate endDate, int dayOfInstalmentRepayment, BigDecimal loanAmount, BigDecimal loanRate, BigDecimal loanTotalInterest, BigDecimal nextInstalmentInterestRepayment, BigDecimal nextInstalmentCapitalRepayment, boolean isActive, LocalDate registrationDate, boolean hasArrears, int counterDaysArrears, BigDecimal penaltyInterest, BigDecimal penaltyInterestAmount, Customer customer, String loanAccountNumber, boolean isClosed, List<LoanCashFlow> loanCashFlows) {
-        this.productName = productName;
-        this.periodInMonth = periodInMonth;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.dayOfInstalmentRepayment = dayOfInstalmentRepayment;
-        this.loanAmount = loanAmount;
-        this.loanRate = loanRate;
-        this.loanTotalInterest = loanTotalInterest;
-        this.nextInstalmentInterestRepayment = nextInstalmentInterestRepayment;
-        this.nextInstalmentCapitalRepayment = nextInstalmentCapitalRepayment;
-        this.isActive = isActive;
-        this.registrationDate = registrationDate;
-        this.hasArrears = hasArrears;
-        this.counterDaysArrears = counterDaysArrears;
-        this.penaltyInterest = penaltyInterest;
-        this.penaltyInterestAmount = penaltyInterestAmount;
-        this.customer = customer;
-        this.loanAccountNumber = loanAccountNumber;
-        this.isClosed = isClosed;
-        this.loanCashFlows = loanCashFlows;
     }
 
     public Loans(Long id, String productName, int periodInMonth, LocalDate startDate, LocalDate endDate, int dayOfInstalmentRepayment, BigDecimal loanAmount, BigDecimal loanRate, BigDecimal loanTotalInterest, BigDecimal nextInstalmentInterestRepayment, BigDecimal nextInstalmentCapitalRepayment, boolean isActive, LocalDate registrationDate, boolean hasArrears, int counterDaysArrears, BigDecimal penaltyInterest, BigDecimal penaltyInterestAmount, Customer customer, String loanAccountNumber, boolean isClosed, List<LoanCashFlow> loanCashFlows) {

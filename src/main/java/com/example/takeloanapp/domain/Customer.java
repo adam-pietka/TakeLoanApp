@@ -33,54 +33,6 @@ public class Customer {
     public Customer(){
     }
 
-    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String idType, String idNumber, String mailAddress) {
-        this.name = name;
-        this.surname = surname;
-        this.phoneNumber = phoneNumber;
-        this.addressStreet = addressStreet;
-        this.addressNumber = addressNumber;
-        this.addressPostCode = addressPostCode;
-        this.addressCity = addressCity;
-        this.peselNumber = peselNumber;
-        this.idType = idType;
-        this.idNumber = idNumber;
-        this.mailAddress = mailAddress;
-    }
-
-    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String nipNumber, String mailAddress) {
-        this.name = name;
-        this.surname = surname;
-        this.phoneNumber = phoneNumber;
-        this.addressStreet = addressStreet;
-        this.addressNumber = addressNumber;
-        this.addressPostCode = addressPostCode;
-        this.addressCity = addressCity;
-        this.nipNumber = nipNumber;
-        this.idType = idType;
-        this.idNumber = idNumber;
-        this.mailAddress = mailAddress;
-    }
-
-    public Customer(Long id, String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String nipNumber, String idType, String idNumber, String mailAddress, boolean isActive, LocalDate registrationDate, LocalDate closedDate, List<Loans> loansList) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.phoneNumber = phoneNumber;
-        this.addressStreet = addressStreet;
-        this.addressNumber = addressNumber;
-        this.addressPostCode = addressPostCode;
-        this.addressCity = addressCity;
-        this.peselNumber = peselNumber;
-        this.nipNumber = nipNumber;
-        this.idType = idType;
-        this.idNumber = idNumber;
-        this.mailAddress = mailAddress;
-        this.isActive = isActive;
-        this.registrationDate = registrationDate;
-        this.closedDate = closedDate;
-        this.loansList = loansList;
-    }
-
     public Customer(Long id, String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String nipNumber, String idType, String idNumber, String mailAddress, boolean isActive, LocalDate registrationDate, LocalDate closedDate, List<Loans> loansList, List<LoanApplicationsList> loanApplicationsLists) {
         this.id = id;
         this.name = name;

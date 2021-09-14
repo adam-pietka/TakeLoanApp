@@ -17,12 +17,12 @@ public class LoanCalculator {
     @Autowired
     LoanApplicationValidator loanApplicationValidator;
 
-    private static BigDecimal ANNUAL_INTEREST_RATE = new BigDecimal("0.0980");
-    private static String LOAN_PRODUCT_NAME = "Summer Promotion 2021.";
+    private static final BigDecimal ANNUAL_INTEREST_RATE = new BigDecimal("0.1980");
+    private static final String LOAN_PRODUCT_NAME = "Summer Promotion 2021.";
 
     public BigDecimal calculateMonthlyInterestRate(LoanApplicationsList loansAppList){
         LOGGER.info("Starting calculating monthly interest rate for application.");
-        BigDecimal monthlyInterestRate = ANNUAL_INTEREST_RATE.divide(BigDecimal.TEN,10,RoundingMode.CEILING) ;
+        BigDecimal monthlyInterestRate = ANNUAL_INTEREST_RATE.divide(new BigDecimal(loansAppList.getRepaymentPeriodInMonth()),10,RoundingMode.CEILING) ;
         LOGGER.info("End of calculating monthly interest rate - is equal: '" + monthlyInterestRate + "' .");
         return  monthlyInterestRate;
     }
@@ -33,9 +33,9 @@ public class LoanCalculator {
         double periodInMonth = loanApp.getRepaymentPeriodInMonth();
         double monthInterestRa = monthlyInterestRate.doubleValue();
 
-        Double result = loanAmount * monthInterestRa /
+        double result = loanAmount * monthInterestRa /
                 (1 - 1 / Math.pow( 1+ monthInterestRa, periodInMonth));
-        BigDecimal monthlyPayment = new BigDecimal(result).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal monthlyPayment = new BigDecimal(result).setScale(2, RoundingMode.CEILING);
         LOGGER.info("End of calculating monthly payment - is equal: " + monthlyPayment);
         boolean newCreditRate =
                 loanApplicationValidator.simulationOfCredit(loanApp, monthlyPayment);
@@ -47,12 +47,12 @@ public class LoanCalculator {
         BigDecimal periodInMonths = new BigDecimal(loanApp.getRepaymentPeriodInMonth());
         BigDecimal totalMonthlyPayments = monthlyPayment.multiply(periodInMonths);
         LOGGER.info("End of calculating TOTAL loan amount - is equal: " + totalMonthlyPayments);
-        return totalMonthlyPayments.setScale(2,RoundingMode.HALF_UP);
+        return totalMonthlyPayments.setScale(2,RoundingMode.CEILING);
     }
     public Loans setStaticDataToLoan(Loans loan){
         Loans responseLoan = loan;
-        loan.setProductName(LOAN_PRODUCT_NAME);
-        loan.setLoanRate(ANNUAL_INTEREST_RATE);
+        responseLoan.setProductName(LOAN_PRODUCT_NAME);
+        responseLoan.setLoanRate(ANNUAL_INTEREST_RATE);
         return responseLoan;
     }
 }

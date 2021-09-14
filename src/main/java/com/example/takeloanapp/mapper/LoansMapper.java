@@ -74,7 +74,6 @@ public class LoansMapper {
                 loans.getLoanCashFlows().stream()
                         .map(LoanCashFlow::getTransactionId)
                         .collect(Collectors.toList())
-
                 );
     }
 
@@ -83,6 +82,4 @@ public class LoansMapper {
                 .map(this::matToLoanDto)
                 .collect(Collectors.toList());
     }
-
-
 }

@@ -9,13 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 
 @Service
 public class LoanApplicationValidator {
+    @Autowired
+    private IbanClient ibanClient;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoanApplicationValidator.class);
     private final int MIN_AGE = 18;
@@ -23,8 +24,6 @@ public class LoanApplicationValidator {
     private final BigDecimal MIN_INCOME_AMOUNT = new BigDecimal("2000.00");
     private final BigDecimal PERCENT_TRESHOLD = new BigDecimal("0.50").setScale(3, RoundingMode.HALF_UP);
 
-    @Autowired
-    private IbanClient ibanClient;
 
 
     public boolean checkThatAppHasMandatoryFields(LoanApplicationsListDto loanAppListDto) throws LoanApplicationsListNotFoundException {

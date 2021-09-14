@@ -2,12 +2,10 @@ package com.example.takeloanapp.service;
 
 import com.example.takeloanapp.domain.LoanCashFlow;
 import com.example.takeloanapp.domain.Loans;
-import com.example.takeloanapp.repository.LoanCashFlowRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;

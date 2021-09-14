@@ -5,7 +5,6 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
 @Entity
 @Table(name = "LOAN_APPLICATIONS_LIST")
 public class LoanApplicationsList {
@@ -37,47 +36,6 @@ public class LoanApplicationsList {
         this.id = id;
         this.customer = customer;
         this.loans = loans;
-        this.employmentForm = employmentForm;
-        this.incomeAmount = incomeAmount;
-        this.employerName = employerName;
-        this.employerNipNumber = employerNipNumber;
-        this.employerAddress = employerAddress;
-        this.employerPhoneNumber = employerPhoneNumber;
-        this.otherLiabilities = otherLiabilities;
-        this.loanAmount = loanAmount;
-        this.repaymentPeriodInMonth = repaymentPeriodInMonth;
-        this.isApplicationAccepted = isApplicationAccepted;
-        this.dateOfRegistrationOfApplication = dateOfRegistrationOfApplication;
-        this.dataOfClosedOfApplication = dataOfClosedOfApplication;
-        this.accountNumberForPaymentOfLoan = accountNumberForPaymentOfLoan;
-        this.isPayoutsDone = isPayoutsDone;
-        this.dateOfPayout = dateOfPayout;
-        this.isClosed = isClosed;
-    }
-
-    public LoanApplicationsList(Customer customer, Loans loans, String employmentForm, BigDecimal incomeAmount, String employerName, String employerNipNumber, String employerAddress, String employerPhoneNumber, BigDecimal otherLiabilities, BigDecimal loanAmount, int repaymentPeriodInMonth, boolean isApplicationAccepted, LocalDate dateOfRegistrationOfApplication, LocalDate dataOfClosedOfApplication, String accountNumberForPaymentOfLoan, boolean isPayoutsDone, LocalDate dateOfPayout, boolean isClosed) {
-        this.customer = customer;
-        this.loans = loans;
-        this.employmentForm = employmentForm;
-        this.incomeAmount = incomeAmount;
-        this.employerName = employerName;
-        this.employerNipNumber = employerNipNumber;
-        this.employerAddress = employerAddress;
-        this.employerPhoneNumber = employerPhoneNumber;
-        this.otherLiabilities = otherLiabilities;
-        this.loanAmount = loanAmount;
-        this.repaymentPeriodInMonth = repaymentPeriodInMonth;
-        this.isApplicationAccepted = isApplicationAccepted;
-        this.dateOfRegistrationOfApplication = dateOfRegistrationOfApplication;
-        this.dataOfClosedOfApplication = dataOfClosedOfApplication;
-        this.accountNumberForPaymentOfLoan = accountNumberForPaymentOfLoan;
-        this.isPayoutsDone = isPayoutsDone;
-        this.dateOfPayout = dateOfPayout;
-        this.isClosed = isClosed;
-    }
-
-    public LoanApplicationsList(Customer customer, String employmentForm, BigDecimal incomeAmount, String employerName, String employerNipNumber, String employerAddress, String employerPhoneNumber, BigDecimal otherLiabilities, BigDecimal loanAmount, int repaymentPeriodInMonth, boolean isApplicationAccepted, LocalDate dateOfRegistrationOfApplication, LocalDate dataOfClosedOfApplication, String accountNumberForPaymentOfLoan, boolean isPayoutsDone, LocalDate dateOfPayout, boolean isClosed) {
-        this.customer = customer;
         this.employmentForm = employmentForm;
         this.incomeAmount = incomeAmount;
         this.employerName = employerName;
