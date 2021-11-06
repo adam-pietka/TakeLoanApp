@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LoanService {
@@ -104,5 +105,14 @@ public class LoanService {
         loansToActivated.get().setActive(true);
         loansToActivated.get().setStartDate(LocalDate.now());
         LOGGER.info("LOAN id: " + loanId + " has been activated.");
+    }
+
+    public void updatePayedAmount(){
+        LOGGER.info("Starting process of updating odd to  payed amount of interest and capital.");
+        loanRepository.findAll().stream()
+                .filter(loans -> loans.getDayOfInstalmentRepayment() == LocalDate.now().getDayOfMonth())
+                .collect(Collectors.toList());
+
+
     }
 }

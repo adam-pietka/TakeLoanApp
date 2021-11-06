@@ -8,9 +8,8 @@ import com.example.takeloanapp.service.LoansInstalmentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
+
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -28,7 +27,6 @@ public class LoansInstalmentsController {
     public void instalmentRepayment(@RequestBody LoanCashFlowDto cashFlowDto){
         LoanCashFlow cashFlow = instalmentMapper.mapToLoanCashFlow(cashFlowDto);
         instalmentsService.depositInstalment(cashFlow.getLoans(), cashFlow.getRepaymentAmount());
-
     }
 
     @GetMapping(value = "getAllCashRepayment")
@@ -42,5 +40,4 @@ public class LoansInstalmentsController {
         List<LoanCashFlow> loanRepayments = cashFlowService.getAllCashTransactionByLoanId(loanId);
         return instalmentMapper.mapToListLoanCashFlowDto(loanRepayments);
     }
-
 }
