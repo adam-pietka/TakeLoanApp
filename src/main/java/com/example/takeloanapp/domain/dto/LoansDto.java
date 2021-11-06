@@ -26,6 +26,8 @@ public class LoansDto {
     private BigDecimal loanTotalInterest;
     private BigDecimal nextInstalmentInterestRepayment;
     private BigDecimal nextInstalmentCapitalRepayment;
+    private BigDecimal payedInterests;
+    private BigDecimal payedCapital;
     private boolean isActive;
     private LocalDate registrationDate;
     private boolean hasArrears;

@@ -22,6 +22,8 @@ public class Loans {
     private BigDecimal loanTotalInterest;
     private BigDecimal nextInstalmentInterestRepayment;
     private BigDecimal nextInstalmentCapitalRepayment;
+    private BigDecimal payedInterests;
+    private BigDecimal payedCapital;
     private boolean isActive;
     private LocalDate registrationDate;
     private boolean hasArrears;
@@ -36,7 +38,7 @@ public class Loans {
     public Loans() {
     }
 
-    public Loans(Long id, String productName, int periodInMonth, LocalDate startDate, LocalDate endDate, int dayOfInstalmentRepayment, BigDecimal loanAmount, BigDecimal loanRate, BigDecimal loanTotalInterest, BigDecimal nextInstalmentInterestRepayment, BigDecimal nextInstalmentCapitalRepayment, boolean isActive, LocalDate registrationDate, boolean hasArrears, int counterDaysArrears, BigDecimal penaltyInterest, BigDecimal penaltyInterestAmount, Customer customer, String loanAccountNumber, boolean isClosed, List<LoanCashFlow> loanCashFlows) {
+    public Loans(Long id, String productName, int periodInMonth, LocalDate startDate, LocalDate endDate, int dayOfInstalmentRepayment, BigDecimal loanAmount, BigDecimal loanRate, BigDecimal loanTotalInterest, BigDecimal nextInstalmentInterestRepayment, BigDecimal nextInstalmentCapitalRepayment, BigDecimal payedInterests, BigDecimal payedCapital, boolean isActive, LocalDate registrationDate, boolean hasArrears, int counterDaysArrears, BigDecimal penaltyInterest, BigDecimal penaltyInterestAmount, Customer customer, String loanAccountNumber, boolean isClosed, List<LoanCashFlow> loanCashFlows) {
         this.id = id;
         this.productName = productName;
         this.periodInMonth = periodInMonth;
@@ -48,6 +50,8 @@ public class Loans {
         this.loanTotalInterest = loanTotalInterest;
         this.nextInstalmentInterestRepayment = nextInstalmentInterestRepayment;
         this.nextInstalmentCapitalRepayment = nextInstalmentCapitalRepayment;
+        this.payedInterests = payedInterests;
+        this.payedCapital = payedCapital;
         this.isActive = isActive;
         this.registrationDate = registrationDate;
         this.hasArrears = hasArrears;
@@ -106,6 +110,14 @@ public class Loans {
 
     public BigDecimal getNextInstalmentCapitalRepayment() {
         return nextInstalmentCapitalRepayment;
+    }
+
+    public BigDecimal getPayedInterests() {
+        return payedInterests;
+    }
+
+    public BigDecimal getPayedCapital() {
+        return payedCapital;
     }
 
     public boolean isActive() {
@@ -197,6 +209,14 @@ public class Loans {
 
     public void setNextInstalmentCapitalRepayment(BigDecimal nextInstalmentCapitalRepayment) {
         this.nextInstalmentCapitalRepayment = nextInstalmentCapitalRepayment;
+    }
+
+    public void setPayedInterests(BigDecimal payedInterests) {
+        this.payedInterests = payedInterests;
+    }
+
+    public void setPayedCapital(BigDecimal payedCapital) {
+        this.payedCapital = payedCapital;
     }
 
     public void setActive(boolean active) {

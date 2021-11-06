@@ -21,6 +21,6 @@ public interface LoanCashFlowRepository extends CrudRepository<LoanCashFlow, Lon
 
     List<LoanCashFlow> findAll();
 
-    List<LoanCashFlow> findAllByLoans(Loans loans);
+    List<LoanCashFlow> findAllByLoans(Optional<Loans> loans);
 
 }

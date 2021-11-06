@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -34,6 +35,12 @@ public class LoansInstalmentsController {
     public List<LoanCashFlowDto>getAllCashRepayment(){
         List<LoanCashFlow> loanCashFlow = cashFlowService.getAllCashTransaction();
         return instalmentMapper.mapToListLoanCashFlowDto(loanCashFlow);
+    }
+
+        @GetMapping(value = "getRepaymentsByLoanId")
+    public List<LoanCashFlowDto> loanRepaymentByLoanId(@RequestParam Long loanId){
+        List<LoanCashFlow> loanRepayments = cashFlowService.getAllCashTransactionByLoanId(loanId);
+        return instalmentMapper.mapToListLoanCashFlowDto(loanRepayments);
     }
 
 }
