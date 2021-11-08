@@ -27,18 +27,27 @@ public class LoanCalculator {
         return  monthlyInterestRate;
     }
 
-    public BigDecimal monthlyPayment(LoanApplicationsList loanApp, BigDecimal monthlyInterestRate){
-        LOGGER.info("Starting calculating monthly payment......");
+    public BigDecimal monthlyInterest(LoanApplicationsList loanApp, BigDecimal monthlyInterestRate){
+        BigDecimal monthlyInterest = new BigDecimal(String.valueOf(loanApp.getLoanAmount().multiply(monthlyInterestRate))).setScale(2, RoundingMode.HALF_UP);
+        LOGGER.info("...monthlyInterest: " + monthlyInterest);
+        return monthlyInterest;
+    }
+
+    public BigDecimal monthlyCapital(LoanApplicationsList loanApp){
         BigDecimal periodInMonth = new BigDecimal(loanApp.getRepaymentPeriodInMonth()).setScale(2,RoundingMode.HALF_UP);
         LOGGER.info("...periodInMonth: " + periodInMonth);
         BigDecimal loanAmount = loanApp.getLoanAmount().setScale(2,RoundingMode.HALF_UP);
         LOGGER.info("...for loanAmount: " + loanAmount);
         BigDecimal monthlyCapital = loanAmount.divide(periodInMonth, 2, RoundingMode.HALF_UP);
         LOGGER.info("...monthlyCapital: " + monthlyCapital);
-        BigDecimal monthlyInterest = new BigDecimal(String.valueOf(loanApp.getLoanAmount().multiply(monthlyInterestRate))).setScale(2, RoundingMode.HALF_UP);
-        LOGGER.info("...monthlyInterest: " + monthlyInterest);
-        BigDecimal monthlyPayment = monthlyCapital.add(monthlyInterest).setScale(2, RoundingMode.HALF_UP);
-        LOGGER.info("...monthlyPayment: " + monthlyPayment);
+        return monthlyCapital;
+    }
+
+    public BigDecimal monthlyInstalment(LoanApplicationsList loanApp, BigDecimal monthlyInterestRate){
+        LOGGER.info("Starting calculating whole amount of monthly payment......");
+        BigDecimal monthlyCapital = monthlyCapital(loanApp);
+        BigDecimal monthlyPayment = monthlyInterest(loanApp, monthlyInterestRate).add(monthlyCapital);
+        LOGGER.info("...monthlyInstalment: " + monthlyPayment);
         return monthlyPayment;
     }
 

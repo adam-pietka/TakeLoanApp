@@ -106,13 +106,15 @@ public class LoanApplicationListService {
     public Loans startPreparingSimulation(LoanApplicationsList loanAppl){
         LOGGER.info("Loan application has been accepted, starting prepare SIMULATION for LOAN");
         BigDecimal monthlyInterestRate = loanCalculator.calculateMonthlyInterestRate(loanAppl);
-        BigDecimal monthlyPayment =  loanCalculator.monthlyPayment(loanAppl, monthlyInterestRate);
+        BigDecimal monthlyPayment =  loanCalculator.monthlyInstalment(loanAppl, monthlyInterestRate);
         BigDecimal totalLoanAmount = loanCalculator.totalLoanPayments(loanAppl, monthlyPayment);
 
         boolean simulationAnswer =  loanApplicationValidator.simulationOfCredit(loanAppl, monthlyPayment);
         if (simulationAnswer){
             LOGGER.info("Simulation for Loan looks fine, so we can go to next step.");
-            return loanService.registerNewLoan(loanAppl, monthlyInterestRate,monthlyPayment, totalLoanAmount);
+            BigDecimal monthlyInterestOfPayment = loanCalculator.monthlyInterest(loanAppl, monthlyInterestRate);
+            BigDecimal monthlyCapitalOfPayment = loanCalculator.monthlyCapital(loanAppl);
+            return loanService.registerNewLoan(loanAppl, monthlyInterestRate, monthlyInterestOfPayment, monthlyCapitalOfPayment ,monthlyPayment, totalLoanAmount);
         }
             LOGGER.info("Simulation for Loan looks badly, loan at this parameters can not be accepted, sorry.");
         return null;

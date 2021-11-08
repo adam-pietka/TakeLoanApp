@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +64,7 @@ public class LoanService {
         return true;
     }
 
-    public Loans registerNewLoan(LoanApplicationsList loanAppl,  BigDecimal monthlyInterestRate, BigDecimal monthlyPayment, BigDecimal totalLoanAmount){
+    public Loans registerNewLoan(LoanApplicationsList loanAppl, BigDecimal monthlyInterestRate, BigDecimal interestOfPayment, BigDecimal monthlyCapitalOfPayment, BigDecimal monthlyWholePayment, BigDecimal totalLoanAmount){
         LOGGER.info("Starting fill data to new loan.");
         Loans newLoan = new Loans();
         newLoan.setPeriodInMonth(loanAppl.getRepaymentPeriodInMonth());
@@ -71,8 +72,8 @@ public class LoanService {
         newLoan.setDayOfInstalmentRepayment(loanAppl.getDateOfRegistrationOfApplication().getDayOfMonth());
         newLoan.setLoanAmount(loanAppl.getLoanAmount());
         newLoan.setLoanTotalInterest(totalLoanAmount.subtract(loanAppl.getLoanAmount()));
-        newLoan.setNextInstalmentInterestRepayment(monthlyInterestRate);
-        newLoan.setNextInstalmentCapitalRepayment(monthlyPayment.subtract(monthlyInterestRate));
+        newLoan.setNextInstalmentInterestRepayment(interestOfPayment);
+        newLoan.setNextInstalmentCapitalRepayment(monthlyCapitalOfPayment);
         newLoan.setRegistrationDate(LocalDate.now());
         newLoan.setCustomer(loanAppl.getCustomer());
         newLoan.setClosed(false);
