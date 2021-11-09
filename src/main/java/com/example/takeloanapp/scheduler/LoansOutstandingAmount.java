@@ -28,6 +28,6 @@ public class LoansOutstandingAmount {
                 .filter(loans-> loans.isClosed() == false)
                 .filter(loans -> loans.getDayOfInstalmentRepayment() == LocalDate.now().getDayOfMonth())
                 .collect(Collectors.toList());
-        
+
     }
 }
