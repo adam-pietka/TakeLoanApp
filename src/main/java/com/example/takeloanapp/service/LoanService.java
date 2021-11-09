@@ -17,7 +17,6 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class LoanService {
@@ -77,6 +76,10 @@ public class LoanService {
         newLoan.setRegistrationDate(LocalDate.now());
         newLoan.setCustomer(loanAppl.getCustomer());
         newLoan.setClosed(false);
+        newLoan.setPayedCapital(BigDecimal.ZERO);
+        newLoan.setPayedInterests(BigDecimal.ZERO);
+        newLoan.setPenaltyInterest(BigDecimal.ZERO);
+        newLoan.setPenaltyInterestAmount(BigDecimal.ZERO);
         Loans allDataLoan =  loanCalculator.setStaticDataToLoan(newLoan);
 
         Loans savedRecord = saveLoan(allDataLoan);
@@ -108,12 +111,22 @@ public class LoanService {
         LOGGER.info("LOAN id: " + loanId + " has been activated.");
     }
 
-    public void updatePayedAmount(){
-        LOGGER.info("Starting process of updating odd to  payed amount of interest and capital.");
-        loanRepository.findAll().stream()
-                .filter(loans -> loans.getDayOfInstalmentRepayment() == LocalDate.now().getDayOfMonth())
-                .collect(Collectors.toList());
-
-
+    public void updatePayedAmount( Loans loans, BigDecimal instalmentAmount) throws LoanNotFoundException{
+        LOGGER.info("Starting update payed loan amount. ID: " + loans.getId());
+        Loans loanUpdatedRecord = loans;
+        BigDecimal currentInterestsAmount = loans.getPayedInterests().setScale(2, RoundingMode.HALF_UP);
+        BigDecimal monthlyInterest = loans.getNextInstalmentInterestRepayment().setScale(2, RoundingMode.HALF_UP);
+        BigDecimal currentCapitalAmount = loans.getPayedCapital().setScale(2, RoundingMode.HALF_UP);
+        BigDecimal monthlyCapital = loans.getNextInstalmentCapitalRepayment().setScale(2, RoundingMode.HALF_UP);
+        if (!instalmentAmount.equals(monthlyCapital.add(monthlyInterest))) {
+            LOGGER.error("Instalment amount is incorrect, it must be equal of monthly payment - " +  monthlyCapital.add(monthlyInterest));
+            throw new LoanNotFoundException("Instalment amount is incorrect, it must be equal of monthly payment - " + monthlyCapital.add(monthlyInterest));
+        }
+        loanUpdatedRecord.setPayedInterests(currentInterestsAmount.add(monthlyInterest));
+        loanUpdatedRecord.setPayedCapital(currentCapitalAmount.add(monthlyCapital));
+        saveLoan(loanUpdatedRecord);
+        LOGGER.info("Payed loan amount has been updated of loan ID: " + loanUpdatedRecord.getId() + ", to this moment has been payed amount: " +
+                "\n\tfor interest: " + loanUpdatedRecord.getPayedInterests() +
+                "\n\tfor capital: " + loanUpdatedRecord.getPayedCapital());
     }
 }
