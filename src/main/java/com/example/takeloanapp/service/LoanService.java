@@ -93,8 +93,7 @@ public class LoanService {
         if (loanAppID.length() > 10){
             loanAppID = loanAppID.substring(0,10);
         }
-        String generatedIban = ibanClient.getIbanCalculator(loanAppID).getIban();
-        return generatedIban ;
+        return ibanClient.getIbanCalculator(loanAppID).getIban() ;
     }
 
     public void setGeneratedAccount(Long loanId, String ibanNumber){

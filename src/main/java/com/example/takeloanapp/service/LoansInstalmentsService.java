@@ -21,10 +21,6 @@ public class LoansInstalmentsService {
     @Autowired
     private LoanCashFlowService cashFlowService;
     @Autowired
-    private LoansController loansController;
-    @Autowired
-    private LoansMapper loansMapper;
-    @Autowired
     private LoanService loanService;
 
     public void depositInstalment(Loans loans, BigDecimal instalmentAmount){
