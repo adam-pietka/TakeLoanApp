@@ -29,9 +29,12 @@ public class LoanApplicationsListController {
 
     @PostMapping(value = "registerLoanApplication", consumes = MediaType.APPLICATION_JSON_VALUE)
     public void registerLoanApplication(@RequestBody LoanApplicationsListDto loanApplicationsListDto) throws LoanApplicationsListNotFoundException {
+        System.out.printf("************\n ***********************");
         if (loanApplicationValidator.checkThatAppHasMandatoryFields(loanApplicationsListDto)){
         LoanApplicationsList loanApp = loanAppListMapper.mapToLoanApplicationsList(loanApplicationsListDto);
         loanAppListService.saveLoanApp(loanApp);
+        } else {
+            System.out.printf("************\n ***********************");
         }
     }
 

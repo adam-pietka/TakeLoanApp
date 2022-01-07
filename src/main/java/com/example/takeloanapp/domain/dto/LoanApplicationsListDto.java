@@ -2,7 +2,6 @@ package com.example.takeloanapp.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -32,9 +31,6 @@ public class LoanApplicationsListDto {
     private boolean isPayoutsDone;
     private LocalDate dateOfPayout;
     private boolean isClosed;
-
-
-
 
     @Override
     public boolean equals(Object o) {

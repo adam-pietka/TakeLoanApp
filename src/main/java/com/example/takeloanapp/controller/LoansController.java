@@ -1,10 +1,7 @@
 package com.example.takeloanapp.controller;
 
-import com.example.takeloanapp.controller.exception.CustomerNotFoundException;
 import com.example.takeloanapp.controller.exception.LoanNotFoundException;
-import com.example.takeloanapp.domain.Customer;
 import com.example.takeloanapp.domain.Loans;
-import com.example.takeloanapp.domain.dto.CustomerDto;
 import com.example.takeloanapp.domain.dto.LoansDto;
 import com.example.takeloanapp.mapper.CustomerMapper;
 import com.example.takeloanapp.mapper.LoansMapper;
@@ -13,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "*")
@@ -42,7 +37,7 @@ public class LoansController {
     }
 
     @GetMapping(value = "findLoanById")
-    public LoansDto getCustomer(@RequestParam Long loanId) throws LoanNotFoundException {
+    public LoansDto getLoanById(@RequestParam Long loanId) throws LoanNotFoundException {
         Loans loan = loanService.getLoanById(loanId).orElseThrow(()-> new LoanNotFoundException("Loan of specified number ID does not exist in DB."));
         return loansMapper.matToLoanDto(loan);
     }

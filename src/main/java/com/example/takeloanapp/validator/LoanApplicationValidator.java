@@ -132,6 +132,4 @@ public class LoanApplicationValidator {
         LOGGER.info("Checking Simulation of new credit rate is complete with NEGATIVE  SIMULATION result: - value: " + calulatedPercent);
         return false;
     }
-
-
 }
