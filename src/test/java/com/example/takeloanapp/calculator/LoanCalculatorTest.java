@@ -9,9 +9,5 @@ class LoanCalculatorTest {
     @Test
     void one(){
         LoanCalculator loanCalculator = new LoanCalculator();
-//        loanCalculator.calculateMonthlyInterestRate();
-
     }
-
-
 }
