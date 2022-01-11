@@ -161,7 +161,8 @@ public class Loans {
     @OneToMany(
             targetEntity = LoanCashFlow.class,
             mappedBy = "loans",
-            fetch = FetchType.LAZY
+//            fetch = FetchType.LAZY
+            fetch = FetchType.EAGER
     )
     public List<LoanCashFlow> getLoanCashFlows() {
         return loanCashFlows;
