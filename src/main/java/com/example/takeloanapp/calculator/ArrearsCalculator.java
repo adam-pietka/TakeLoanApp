@@ -1,5 +1,7 @@
 package com.example.takeloanapp.calculator;
 
+import com.example.takeloanapp.domain.Loans;
+import com.example.takeloanapp.domain.dto.LoanAmountAndDataDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
