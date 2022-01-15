@@ -11,13 +11,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class LoansOutstandingAmount {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoansOutstandingAmount.class);
+public class LoansOutstandingAmountScheduler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoansOutstandingAmountScheduler.class);
 
     @Autowired
     private LoanArrearsService loanArrearsService;
 
-    @Scheduled(fixedDelay = 300_000) // == 10s = 10_000.
+    @Scheduled(fixedDelay = 120_000) // == 10s = 10_000.
 //    @Scheduled(cron = "0 50 23 * * ") //
     public void checkOutstandingAmount() throws LoanNotFoundException {
         LOGGER.info("Starting checking Outstanding Amount......");

@@ -40,4 +40,10 @@ public class LoansInstalmentsController {
         List<LoanCashFlow> loanRepayments = cashFlowService.getAllCashTransactionByLoanId(loanId);
         return instalmentMapper.mapToListLoanCashFlowDto(loanRepayments);
     }
+
+    @PutMapping(value = "updatePayment")
+    public void updatePayment( @RequestBody LoanCashFlowDto loanCashFlowDto){
+        LoanCashFlow cashFlow = instalmentMapper.mapToLoanCashFlow(loanCashFlowDto);
+        instalmentsService.updatePayment(cashFlow);
+    }
 }

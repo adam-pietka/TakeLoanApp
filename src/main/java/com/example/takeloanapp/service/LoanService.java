@@ -117,10 +117,6 @@ public class LoanService {
         BigDecimal monthlyInterest = loans.getNextInstalmentInterestRepayment().setScale(2, RoundingMode.HALF_UP);
         BigDecimal currentCapitalAmount = loans.getPayedCapital().setScale(2, RoundingMode.HALF_UP);
         BigDecimal monthlyCapital = loans.getNextInstalmentCapitalRepayment().setScale(2, RoundingMode.HALF_UP);
-        if (!instalmentAmount.equals(monthlyCapital.add(monthlyInterest))) {
-            LOGGER.error("Instalment amount is incorrect, it must be equal of monthly payment - " +  monthlyCapital.add(monthlyInterest));
-            throw new LoanNotFoundException("Instalment amount is incorrect, it must be equal of monthly payment - " + monthlyCapital.add(monthlyInterest));
-        }
         loanUpdatedRecord.setPayedInterests(currentInterestsAmount.add(monthlyInterest));
         loanUpdatedRecord.setPayedCapital(currentCapitalAmount.add(monthlyCapital));
         saveLoan(loanUpdatedRecord);

@@ -19,13 +19,13 @@ public class LoanInstalmentMapper {
                 cashFlowDto.getTransactionId(),
                 cashFlowDto.getLoansId() != null ? loanRepository.findById(cashFlowDto.getLoansId()).orElse(null) : null ,
                 cashFlowDto.getRepaymentAmount(),
-                cashFlowDto.getOverpaymentAmount(),
-                cashFlowDto.getUnderpaymentAmount(),
+                cashFlowDto.getPostingsAsInstalment(),
+                cashFlowDto.getPostingsAsArrears(),
                 cashFlowDto.isAnInstallment(),
                 cashFlowDto.isDisbursement(),
                 cashFlowDto.getAccountNumber(),
-                cashFlowDto.getTransactionTimeStamp()
-        );
+                cashFlowDto.getTransactionTimeStamp(),
+                cashFlowDto.getPostingsTimeStamp());
 
     }
 
@@ -34,12 +34,13 @@ public class LoanInstalmentMapper {
                 cashFlow.getTransactionId(),
                 cashFlow.getLoans() != null ? cashFlow.getLoans().getId() : null,
                 cashFlow.getRepaymentAmount(),
-                cashFlow.getOverpaymentAmount(),
-                cashFlow.getUnderpaymentAmount(),
+                cashFlow.getPostingsAsInstalment(),
+                cashFlow.getPostingsAsArrears(),
                 cashFlow.isAnInstallment(),
                 cashFlow.isDisbursement(),
                 cashFlow.getAccountNumber(),
-                cashFlow.getTransactionTimeStamp()
+                cashFlow.getTransactionTimeStamp(),
+                cashFlow.getPostingsTimeStamp()
         );
     }
 

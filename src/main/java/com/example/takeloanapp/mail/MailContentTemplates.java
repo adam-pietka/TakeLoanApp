@@ -17,6 +17,7 @@ public class MailContentTemplates {
     private static final String SUBJECT_REGISTRATION_CUSTOMER = "Welcome in out company.";
     private static final String SUBJECT_REGISTRATION_LOAN = "Information about loan.";
     private static final String SUBJECT_REPAYMENT_REMINDER = "Soft reminder, about loan repayment.";
+    private static final String SUBJECT_FOR_CLOSED_LOAN = "Congratulations your loan has been closed.";
     private static final String BEST_REGARDS = "\n\nBest regards,\nBest 4 IT";
 
 
@@ -73,6 +74,23 @@ public class MailContentTemplates {
                 "\nNext repayment will be at " + LocalDate.now().plusDays(1) + BEST_REGARDS;
         emailService.send(new Mail(mailAddress, SUBJECT_REPAYMENT_REMINDER,
                 messageContent,null));
+
+    }
+
+    public void sentInformationAboutOverpaymentOnClosedLoan(String loanInformation){
+        String messageContent = "Hi," +
+                "\nwe just find closed loand with overpayment." +
+                "\n" + loanInformation ;
+        emailService.send(new Mail( adminConfig.getAdminMail(), "Overpayment on closed loan",
+                messageContent, null));
+    }
+
+    public void sendCustomerMailAboutClosedLoan(String mailAddress){
+        String messageContent = "Hello," +
+                "\nCongratulation you payed off your loan." +
+                "\n" + BEST_REGARDS;
+        emailService.send(new Mail( mailAddress, SUBJECT_FOR_CLOSED_LOAN,
+                messageContent, null));
 
     }
 }

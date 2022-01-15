@@ -15,12 +15,13 @@ public class LoanCashFlowDto {
     private Long transactionId ;
     private Long loansId;
     private BigDecimal repaymentAmount;
-    private BigDecimal overpaymentAmount;
-    private BigDecimal underpaymentAmount;
+    private BigDecimal postingsAsInstalment;
+    private BigDecimal postingsAsArrears;
     private boolean isAnInstallment;
     private boolean isDisbursement;
     private String accountNumber;
     private LocalDateTime transactionTimeStamp;
+    private LocalDateTime postingsTimeStamp;
 
     @Override
     public boolean equals(Object o) {
@@ -36,9 +37,9 @@ public class LoanCashFlowDto {
         if (loansId != null ? !loansId.equals(that.loansId) : that.loansId != null) return false;
         if (repaymentAmount != null ? !repaymentAmount.equals(that.repaymentAmount) : that.repaymentAmount != null)
             return false;
-        if (overpaymentAmount != null ? !overpaymentAmount.equals(that.overpaymentAmount) : that.overpaymentAmount != null)
+        if (postingsAsInstalment != null ? !postingsAsInstalment.equals(that.postingsAsInstalment) : that.postingsAsInstalment != null)
             return false;
-        if (underpaymentAmount != null ? !underpaymentAmount.equals(that.underpaymentAmount) : that.underpaymentAmount != null)
+        if (postingsAsArrears != null ? !postingsAsArrears.equals(that.postingsAsArrears) : that.postingsAsArrears != null)
             return false;
         if (accountNumber != null ? !accountNumber.equals(that.accountNumber) : that.accountNumber != null)
             return false;
@@ -50,8 +51,8 @@ public class LoanCashFlowDto {
         int result = transactionId != null ? transactionId.hashCode() : 0;
         result = 31 * result + (loansId != null ? loansId.hashCode() : 0);
         result = 31 * result + (repaymentAmount != null ? repaymentAmount.hashCode() : 0);
-        result = 31 * result + (overpaymentAmount != null ? overpaymentAmount.hashCode() : 0);
-        result = 31 * result + (underpaymentAmount != null ? underpaymentAmount.hashCode() : 0);
+        result = 31 * result + (postingsAsInstalment != null ? postingsAsInstalment.hashCode() : 0);
+        result = 31 * result + (postingsAsArrears != null ? postingsAsArrears.hashCode() : 0);
         result = 31 * result + (isAnInstallment ? 1 : 0);
         result = 31 * result + (isDisbursement ? 1 : 0);
         result = 31 * result + (accountNumber != null ? accountNumber.hashCode() : 0);

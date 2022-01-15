@@ -12,26 +12,28 @@ public class LoanCashFlow {
     private Long transactionId ;
     private Loans loans;
     private BigDecimal repaymentAmount;
-    private BigDecimal overpaymentAmount;
-    private BigDecimal underpaymentAmount;
+    private BigDecimal postingsAsInstalment;
+    private BigDecimal postingsAsArrears;
     private boolean isAnInstallment;
     private boolean isDisbursement;
     private String accountNumber;
     private LocalDateTime transactionTimeStamp;
+    private LocalDateTime postingsTimeStamp;
 
     public LoanCashFlow() {
     }
 
-    public LoanCashFlow(Long transactionId, Loans loans, BigDecimal repaymentAmount, BigDecimal overpaymentAmount, BigDecimal underpaymentAmount, boolean isAnInstallment, boolean isDisbursement, String accountNumber, LocalDateTime transactionTimeStamp) {
+    public LoanCashFlow(Long transactionId, Loans loans, BigDecimal repaymentAmount, BigDecimal postingsAsInstalment, BigDecimal postingsAsArrears, boolean isAnInstallment, boolean isDisbursement, String accountNumber, LocalDateTime transactionTimeStamp, LocalDateTime postingsTimeStamp) {
         this.transactionId = transactionId;
         this.loans = loans;
         this.repaymentAmount = repaymentAmount;
-        this.overpaymentAmount = overpaymentAmount;
-        this.underpaymentAmount = underpaymentAmount;
+        this.postingsAsInstalment = postingsAsInstalment;
+        this.postingsAsArrears = postingsAsArrears;
         this.isAnInstallment = isAnInstallment;
         this.isDisbursement = isDisbursement;
         this.accountNumber = accountNumber;
         this.transactionTimeStamp = transactionTimeStamp;
+        this.postingsTimeStamp = postingsTimeStamp;
     }
 
     @Id
@@ -52,12 +54,12 @@ public class LoanCashFlow {
         return repaymentAmount;
     }
 
-    public BigDecimal getOverpaymentAmount() {
-        return overpaymentAmount;
+    public BigDecimal getPostingsAsInstalment() {
+        return postingsAsInstalment;
     }
 
-    public BigDecimal getUnderpaymentAmount() {
-        return underpaymentAmount;
+    public BigDecimal getPostingsAsArrears() {
+        return postingsAsArrears;
     }
 
     public boolean isAnInstallment() {
@@ -76,6 +78,10 @@ public class LoanCashFlow {
         return transactionTimeStamp;
     }
 
+    public LocalDateTime getPostingsTimeStamp() {
+        return postingsTimeStamp;
+    }
+
     public void setTransactionId(Long transactionId) {
         this.transactionId = transactionId;
     }
@@ -88,12 +94,12 @@ public class LoanCashFlow {
         this.repaymentAmount = repaymentAmount;
     }
 
-    public void setOverpaymentAmount(BigDecimal overpaymentAmount) {
-        this.overpaymentAmount = overpaymentAmount;
+    public void setPostingsAsInstalment(BigDecimal postingsAsInstalment) {
+        this.postingsAsInstalment = postingsAsInstalment;
     }
 
-    public void setUnderpaymentAmount(BigDecimal underpaymentAmount) {
-        this.underpaymentAmount = underpaymentAmount;
+    public void setPostingsAsArrears(BigDecimal postingsAsArrears) {
+        this.postingsAsArrears = postingsAsArrears;
     }
 
     public void setAnInstallment(boolean anInstallment) {
@@ -110,5 +116,9 @@ public class LoanCashFlow {
 
     public void setTransactionTimeStamp(LocalDateTime transactionTimeStamp) {
         this.transactionTimeStamp = transactionTimeStamp;
+    }
+
+    public void setPostingsTimeStamp(LocalDateTime postingsTimeStamp) {
+        this.postingsTimeStamp = postingsTimeStamp;
     }
 }
