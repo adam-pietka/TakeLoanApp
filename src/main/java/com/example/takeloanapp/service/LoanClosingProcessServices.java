@@ -1,5 +1,6 @@
 package com.example.takeloanapp.service;
 
+import com.example.takeloanapp.calculator.ArrearsCalculator;
 import com.example.takeloanapp.controller.LoansController;
 import com.example.takeloanapp.controller.LoansInstalmentsController;
 import com.example.takeloanapp.controller.exception.LoanNotFoundException;
@@ -31,6 +32,8 @@ public class LoanClosingProcessServices {
     private LoansInstalmentsController loansInstalmentsController;
     @Autowired
     private MailContentTemplates mailContentTemplates;
+    @Autowired
+    private ArrearsCalculator arrearsCalculator;
 
     public void checkLoansToBeClosed() throws LoanNotFoundException {
         LOGGER.info("Starting checking loans to be closed......");
@@ -44,8 +47,8 @@ public class LoanClosingProcessServices {
         } else {
             for (LoansDto checkedLoan : loansDtoList) {
                 Loans tmpLoan = loansMapper.mapToLoan(checkedLoan);
-                BigDecimal dueAmount = loanArrearsService.checkInstallmentsDue(tmpLoan);
-                BigDecimal sumOfAllPayments = loanArrearsService.sumAmountOfPayedInstallments(loansInstalmentsController.loanRepaymentByLoanId(tmpLoan.getId())).getBigDecimalAmount();
+                BigDecimal dueAmount = arrearsCalculator.checkInstallmentsDue(tmpLoan);
+                BigDecimal sumOfAllPayments = arrearsCalculator.sumAmountOfPayedInstallments(loansInstalmentsController.loanRepaymentByLoanId(tmpLoan.getId())).getBigDecimalAmount();
                 if (sumOfAllPayments.compareTo(dueAmount) == 0 && !tmpLoan.isHasArrears()) {
                     LOGGER.info("sum ar all done payment is equal to due amount");
                     doLoanClose(tmpLoan);

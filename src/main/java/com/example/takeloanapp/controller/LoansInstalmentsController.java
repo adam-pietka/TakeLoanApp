@@ -8,6 +8,7 @@ import com.example.takeloanapp.service.LoansInstalmentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
@@ -39,6 +40,11 @@ public class LoansInstalmentsController {
     public List<LoanCashFlowDto> loanRepaymentByLoanId(@RequestParam Long loanId){
         List<LoanCashFlow> loanRepayments = cashFlowService.getAllCashTransactionByLoanId(loanId);
         return instalmentMapper.mapToListLoanCashFlowDto(loanRepayments);
+    }
+
+    @GetMapping(value = "getArrearsRepaymentByLoanId")
+    public List<LoanCashFlowDto> loanArrearsRepaymentByLoanId(Long loanId){
+        return  null;
     }
 
     @PutMapping(value = "updatePayment")

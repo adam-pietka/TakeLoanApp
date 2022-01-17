@@ -17,8 +17,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Period;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,144 +35,100 @@ public class LoanArrearsService {
     @Autowired
     private LoansMapper loansMapper;
 
-    public void checkArrearsOnLoan () throws LoanNotFoundException {
+    public void checkArrearsOnLoan() throws LoanNotFoundException {
         LOGGER.info("STARTING checkArrearsOnLoan.");
         List<Loans> allLoans = loanService.getAllLoans().stream()
                 .filter(loans -> !loans.isClosed())
                 .filter(loans -> loans.getDayOfInstalmentRepayment() == LocalDate.now().getDayOfMonth())
                 .collect(Collectors.toList());
-        if (!allLoans.isEmpty()){
+        if (allLoans.isEmpty()) {
+            LOGGER.info("No loans to check today.");
+        } else {
             LOGGER.info("Let go and do, there is/are: " + allLoans.size() + " loan/s to check.");
             for (Loans loanToCheck : allLoans) {
                 LOGGER.info("***************\tWorking with LOAN ID: " + loanToCheck.getId() + "\t******************************");
-                BigDecimal dueAmount = checkInstallmentsDue(loanToCheck);
+                BigDecimal dueAmount = arrearsCalculator.checkInstallmentsDue(loanToCheck);
                 List<LoanCashFlowDto> allPaymentsForLoanList = loansInstalmentsController.loanRepaymentByLoanId(loanToCheck.getId());
-                LoanAmountAndDataDTO repaidAmountAndDate = sumAmountOfPayedInstallments(allPaymentsForLoanList);
-
-                if (dueAmount.compareTo(repaidAmountAndDate.getBigDecimalAmount()) == -1){
-                    LOGGER.info("Payed amount: " +  repaidAmountAndDate.getBigDecimalAmount().subtract(dueAmount).setScale(2, RoundingMode.HALF_UP) + " in higher that due amount, checking outstanding amount.");
-                    // tutaj obługa dla nadpłat wersus wpłaty które pokrywały kary
-                    BigDecimal instalmentAndOutstandingAmount = loanToCheck.getPenaltyInterestAmount().add(repaidAmountAndDate.getBigDecimalAmount());
-                    if (loanToCheck.isHasArrears() && repaidAmountAndDate.getBigDecimalAmount().compareTo(instalmentAndOutstandingAmount) <= 0 ){
-                        loanToCheck.setPenaltyInterestAmount(BigDecimal.ZERO);
-                        loanToCheck.setHasArrears(false);
-                        loansController.updateLoan(loansMapper.matToLoanDto(loanToCheck));
-                        LOGGER.info("Loan has arrears, change flag HasArrears to FALSE.");
-                        LOGGER.info("The penalty interest has been paid and the flag 'HasArrears' has been set to FALSE.");
-                    } else {
-                        LOGGER.info("Loan has overpayment amount.");
-                    }
+                LoanAmountAndDataDTO sumOffAllRepaidTransactionsAndDate = arrearsCalculator.sumAmountOfPayedInstallments(allPaymentsForLoanList);
+                BigDecimal repaidArrears = arrearsCalculator.sumOfArrears(allPaymentsForLoanList.stream().filter(c->c.getPostingsAsArrears() != null ).collect(Collectors.toList()));
+                if( loanToCheck.isHasArrears()){
+                    LOGGER.info("Loan has set flag HasArrears, actually penalty amount is " + loanToCheck.getPenaltyInterestAmount());
+                    repaidArrears.add(loanToCheck.getPenaltyInterestAmount());
                 }
-                if (dueAmount.compareTo(repaidAmountAndDate.getBigDecimalAmount()) == 0){
-                    LOGGER.info("There are not outstandings amount or overpayments.");
-//                    allPaymentsForLoanList.stream()
-//                            .filter(i-> i.getPostingsTimeStamp() == null)
-//                            .collect(Collectors.toList());
-                    for (LoanCashFlowDto payment: allPaymentsForLoanList) {
-                        if(payment.getPostingsTimeStamp() == null){ // ********************************************************* to remove / improve
+                BigDecimal sumAllPayedInstallments = sumOffAllRepaidTransactionsAndDate.bigDecimalAmount.subtract(repaidArrears);
 
-                        payment.setPostingsTimeStamp(LocalDateTime.now());
-                        payment.setPostingsAsInstalment(payment.getRepaymentAmount());
-                        loansInstalmentsController.updatePayment(payment);
-                        }
-                    }
+                if (dueAmount.compareTo(sumAllPayedInstallments) == -1) {
+                    handleDueAmountHigherThatRepaid(loanToCheck, sumOffAllRepaidTransactionsAndDate, dueAmount);
                 }
-                if (dueAmount.compareTo(repaidAmountAndDate.getBigDecimalAmount()) == 1){
-                    BigDecimal arrearsAmoutn = dueAmount.subtract(repaidAmountAndDate.getBigDecimalAmount());
-                    LOGGER.info("There is outstandings amount. The amount of arrears is - " + arrearsAmoutn + " PLN.");
-                    loanToCheck.setHasArrears(true);
-                    BigDecimal outstandingAmountOnLoan = arrearsCalculator.calculatingArrearsAmount(calculatingNumberOfArrearsDays(repaidAmountAndDate), loanToCheck.getLoanAmount());
-                    BigDecimal existingArrears = BigDecimal.ZERO;
-                    if (loanToCheck.getPenaltyInterestAmount() != null) {
-                        existingArrears = loanToCheck.getPenaltyInterestAmount();
-                    }
-                    loanToCheck.setPenaltyInterestAmount(outstandingAmountOnLoan.add(existingArrears));
-                    LOGGER.info("Loan has arrears, change flag HasArrears to true.");
-                    LOGGER.info("Loan has arrears, setPenaltyInterestAmount: " + outstandingAmountOnLoan);
-                    loansController.updateLoan(loansMapper.matToLoanDto(loanToCheck));
-
-//                    allPaymentsForLoanList.stream()
-//                            .filter(i -> i.getPostingsTimeStamp()==null)
-//                            .collect(Collectors.toList());
-
-                    for (LoanCashFlowDto payment: allPaymentsForLoanList) {
-
-                    if(payment.getPostingsTimeStamp() == null){ // ********************************************************* to remove / improve
-                        payment.setPostingsTimeStamp(LocalDateTime.now());
-                        BigDecimal tmpArrears = loansController.getLoanById(payment.getLoansId()).getPenaltyInterestAmount();
-                        if (payment.getRepaymentAmount().compareTo(tmpArrears) >= 0){
-                            payment.setPostingsAsArrears(tmpArrears);
-                            payment.setPostingsAsInstalment(payment.getRepaymentAmount().subtract(tmpArrears));
-                            payment.setPostingsTimeStamp(LocalDateTime.now());
-                            loanToCheck.setPenaltyInterestAmount(BigDecimal.ZERO);
-                        } else {
-                            payment.setPostingsAsArrears(payment.getRepaymentAmount());
-                            payment.setPostingsTimeStamp(LocalDateTime.now());
-                            loanToCheck.setPenaltyInterestAmount(tmpArrears.subtract(payment.getRepaymentAmount()));
-                        }
-                        loansInstalmentsController.updatePayment(payment);
-                        loansController.updateLoan(loansMapper.matToLoanDto(loanToCheck));
-                    } }
+                if (dueAmount.compareTo(sumAllPayedInstallments) == 0) {
+                    handleDueAmountEqualToRepayment(allPaymentsForLoanList);
+                }
+                if (dueAmount.compareTo(sumAllPayedInstallments) == 1) {
+                    handleDueAmountLowerThatRepaid(loanToCheck, allPaymentsForLoanList, sumOffAllRepaidTransactionsAndDate, dueAmount);
                 }
             }
-        } else LOGGER.info("No loans to check today.");
-    }
-
-    public BigDecimal checkInstallmentsDue(Loans loans) throws LoanNotFoundException {
-        int repaidInstalmentNumber = calculateNumbersOfMonthsFromStart( loans.getStartDate());
-        LOGGER.info("Result 'repaidInstalmentNumber' is: " + repaidInstalmentNumber);
-        if (repaidInstalmentNumber > 0) {
-            BigDecimal installment ;
-            installment = loans.getNextInstalmentInterestRepayment().add(loans.getNextInstalmentCapitalRepayment());
-            LOGGER.info( "For loan ID: " +loans.getId()+ ", installment is equal:\t" + installment + " PLN.");
-            BigDecimal dueAmount;
-            dueAmount = installment.multiply(BigDecimal.valueOf(repaidInstalmentNumber)).setScale(2, RoundingMode.HALF_UP) ;
-            LOGGER.info("In total, it should be paid off: \t" + dueAmount + " amount for capital and interests.");
-            return dueAmount;
         }
-        LOGGER.info("Loan ID: " + + loans.getId() + " is too young. There shouldn't be payed any instalments.");
-        return BigDecimal.ZERO;
     }
 
-    public int calculateNumbersOfMonthsFromStart(LocalDate startDate){
-        LOGGER.info("Starting calculating how many months/instalments was payed");
-        Period diff = Period.between(startDate, LocalDate.now());
-        int years = diff.getYears();
-        int months = diff.getMonths();
-        return years * 12 + months;
-    }
-
-    public LoanAmountAndDataDTO sumAmountOfPayedInstallments(List<LoanCashFlowDto> installmentsList){
-        LOGGER.info("Start - sumAmountOfPayedInstallments.");
-            BigDecimal result = BigDecimal.ZERO;
-            LocalDateTime lastRepayment = LocalDateTime.MIN;
-        if (!installmentsList.isEmpty()) {
-            try {
-                lastRepayment = LocalDateTime.of(loansController.getLoanById(installmentsList.get(0).getLoansId()).getStartDate(), LocalTime.ofSecondOfDay(0));
-            } catch (LoanNotFoundException e) {
-                e.printStackTrace();
-            }
-            for (LoanCashFlowDto n: installmentsList) {
-                if (n.isAnInstallment()){
-                    result = result.add(n.getRepaymentAmount());
-                    if (n.getTransactionTimeStamp().isAfter(lastRepayment)) lastRepayment = n.getTransactionTimeStamp();
-                }
-            }
-            LOGGER.info("SUM of all done repayments is: " + result);
-            LOGGER.info("Timestamp of last repayment transaction is: " + lastRepayment);
-            return new LoanAmountAndDataDTO(result, lastRepayment);
+    public void handleDueAmountEqualToRepayment(List<LoanCashFlowDto> allPaymentsForLoanList) {
+        LOGGER.info("There are not outstandings amount or overpayments.");
+        List<LoanCashFlowDto> temList = allPaymentsForLoanList.stream()
+                .filter(i -> i.getPostingsTimeStamp() == null)
+                .collect(Collectors.toList());
+        for (LoanCashFlowDto payment : temList) {
+            payment.setPostingsTimeStamp(LocalDateTime.now());
+            payment.setPostingsAsInstalment(payment.getRepaymentAmount());
+            loansInstalmentsController.updatePayment(payment);
         }
-        return new LoanAmountAndDataDTO(result, lastRepayment);
     }
 
-    public int calculatingNumberOfArrearsDays(LoanAmountAndDataDTO amountAndDate){
-        LOGGER.info("Starting calculating numbers of days");
-        Period diff = Period.between(amountAndDate.getLocalDateTime().toLocalDate(), LocalDate.now());
-        int years = diff.getYears();
-        int months = diff.getMonths();
-        int days = diff.getDays();
-        int result =  years * 365 + months * 30 + days ;
-        LOGGER.info("Result is: \t" + result + " days.");
-        return result;
+    public void handleDueAmountHigherThatRepaid(Loans loanToCheck, LoanAmountAndDataDTO repaidAmountAndDate, BigDecimal dueAmount) throws LoanNotFoundException {
+        LOGGER.info("Payed amount: " + repaidAmountAndDate.getBigDecimalAmount().subtract(dueAmount).setScale(2, RoundingMode.HALF_UP) + " in higher that due amount, checking outstanding amount.");
+        BigDecimal instalmentAndOutstandingAmount = loanToCheck.getPenaltyInterestAmount().add(repaidAmountAndDate.getBigDecimalAmount());
+        if (loanToCheck.isHasArrears() && repaidAmountAndDate.getBigDecimalAmount().compareTo(instalmentAndOutstandingAmount) <= 0) {
+            loanToCheck.setPenaltyInterestAmount(BigDecimal.ZERO);
+            loanToCheck.setHasArrears(false);
+            loansController.updateLoan(loansMapper.matToLoanDto(loanToCheck));
+            LOGGER.info("Loan has arrears, change flag HasArrears to FALSE.");
+            LOGGER.info("The penalty interest has been paid and the flag 'HasArrears' has been set to FALSE.");
+        } else {
+            LOGGER.info("Loan has overpayment amount.");
+        }
+    }
+
+    public void handleDueAmountLowerThatRepaid(Loans loanToCheck, List<LoanCashFlowDto> allPaymentsForLoanList, LoanAmountAndDataDTO repaidAmountAndDate, BigDecimal dueAmount) throws LoanNotFoundException {
+        BigDecimal arrearsAmoutn = dueAmount.subtract(repaidAmountAndDate.getBigDecimalAmount());
+        LOGGER.info("There is outstandings amount. The amount of arrears is - " + arrearsAmoutn + " PLN.");
+        loanToCheck.setHasArrears(true);
+        BigDecimal outstandingAmountOnLoan = arrearsCalculator.calculatingArrearsAmount(arrearsCalculator.calculatingNumberOfArrearsDays(repaidAmountAndDate), loanToCheck.getLoanAmount());
+        BigDecimal existingArrears = BigDecimal.ZERO;
+        if (loanToCheck.getPenaltyInterestAmount() != null) {
+            existingArrears = loanToCheck.getPenaltyInterestAmount();
+        }
+        loanToCheck.setPenaltyInterestAmount(outstandingAmountOnLoan.add(existingArrears));
+        LOGGER.info("Loan has arrears, change flag HasArrears to true.");
+        LOGGER.info("Loan has arrears, setPenaltyInterestAmount: " + outstandingAmountOnLoan);
+        loansController.updateLoan(loansMapper.matToLoanDto(loanToCheck));
+
+        List<LoanCashFlowDto> tempListPaymentsNotPosted = allPaymentsForLoanList.stream()
+                .filter(i -> i.getPostingsTimeStamp() == null)
+                .collect(Collectors.toList());
+
+        for (LoanCashFlowDto payment : tempListPaymentsNotPosted) {
+            payment.setPostingsTimeStamp(LocalDateTime.now());
+            BigDecimal tmpArrears = loansController.getLoanById(payment.getLoansId()).getPenaltyInterestAmount();
+            if (payment.getRepaymentAmount().compareTo(tmpArrears) >= 0) {
+                payment.setPostingsAsArrears(tmpArrears);
+                payment.setPostingsAsInstalment(payment.getRepaymentAmount().subtract(tmpArrears));
+                payment.setPostingsTimeStamp(LocalDateTime.now());
+                loanToCheck.setPenaltyInterestAmount(BigDecimal.ZERO);
+            } else {
+                payment.setPostingsAsArrears(payment.getRepaymentAmount());
+                payment.setPostingsTimeStamp(LocalDateTime.now());
+                loanToCheck.setPenaltyInterestAmount(tmpArrears.subtract(payment.getRepaymentAmount()));
+            }
+            loansInstalmentsController.updatePayment(payment);
+            loansController.updateLoan(loansMapper.matToLoanDto(loanToCheck));
+        }
     }
 }
