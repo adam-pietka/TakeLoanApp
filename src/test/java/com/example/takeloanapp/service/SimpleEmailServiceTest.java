@@ -11,6 +11,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -26,7 +28,7 @@ class SimpleEmailServiceTest {
     @Test
     public void shouldSendEmail(){
         //G
-        Mail mail = new Mail("adi2-20@wp.pl", "Test TOPIC ooo", "Test Message\n TEST", "best4it.ap@gmail.com");
+        Mail mail = new Mail("adi2-20@wp.pl", "Test TOPIC ooo", "Test Message\n TEST",null );
 //        Mail mail = new Mail("best4it.ap@gmail.com", "Test Message","Lorem ipsum.... ", "adi2-2@wp.pl");
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();

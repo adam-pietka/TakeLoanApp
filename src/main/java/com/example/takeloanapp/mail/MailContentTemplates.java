@@ -41,7 +41,6 @@ public class MailContentTemplates {
 
         emailService.send( new Mail(loans.getCustomer().getMailAddress(), SUBJECT_REGISTRATION_LOAN,
                 mailContent, null));
-
     }
 
     public void getNumbersOfAllLoans(){
@@ -91,6 +90,13 @@ public class MailContentTemplates {
                 "\n" + BEST_REGARDS;
         emailService.send(new Mail( mailAddress, SUBJECT_FOR_CLOSED_LOAN,
                 messageContent, null));
+    }
 
+    public  void sentInformationAboutOutstandingsAmountOnClosedLoan(String loanInformation){
+        String messageContent = "Hi," +
+                "\nIt's not possible to close loan, because there is outstanding amount." +
+                "\n" + loanInformation ;
+        emailService.send(new Mail( adminConfig.getAdminMail(), "Arrears on loan which should be closed",
+                messageContent, null));
     }
 }

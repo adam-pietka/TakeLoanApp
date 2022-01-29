@@ -69,6 +69,7 @@ public class ArrearsCalculator {
                 lastRepayment = LocalDateTime.of(loansController.getLoanById(installmentsList.get(0).getLoansId()).getStartDate(), LocalTime.ofSecondOfDay(0));
             } catch (LoanNotFoundException e) {
                 e.printStackTrace();
+                LOGGER.error("It's not possible to rad data for last repayment.");
             }
             for (LoanCashFlowDto n : installmentsList) {
                 if (n.isAnInstallment()) {
@@ -105,9 +106,9 @@ public class ArrearsCalculator {
                 result = result.add(n.getPostingsAsArrears());
             }
             LOGGER.info("SUM of all done payed arrears is: " + result);
-
             return result;
         }
         return result;
     }
+
 }

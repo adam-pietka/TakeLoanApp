@@ -50,36 +50,32 @@ public class LoanArrearsService {
                 BigDecimal dueAmount = arrearsCalculator.checkInstallmentsDue(loanToCheck);
                 List<LoanCashFlowDto> allPaymentsForLoanList = loansInstalmentsController.loanRepaymentByLoanId(loanToCheck.getId());
                 LoanAmountAndDataDTO sumOffAllRepaidTransactionsAndDate = arrearsCalculator.sumAmountOfPayedInstallments(allPaymentsForLoanList);
-                BigDecimal repaidArrears = arrearsCalculator.sumOfArrears(allPaymentsForLoanList.stream().filter(c->c.getPostingsAsArrears() != null ).collect(Collectors.toList()));
-                if( loanToCheck.isHasArrears()){
-                    LOGGER.info("Loan has set flag HasArrears, actually penalty amount is " + loanToCheck.getPenaltyInterestAmount());
+                BigDecimal repaidArrears = arrearsCalculator.sumOfArrears(allPaymentsForLoanList.stream().filter(c -> c.getPostingsAsArrears() != null).collect(Collectors.toList()));
+                if (loanToCheck.isHasArrears()) {
+                    LOGGER.info("Loan has set flag HasArrears, before postings penalty amount is " + loanToCheck.getPenaltyInterestAmount());
                     repaidArrears.add(loanToCheck.getPenaltyInterestAmount());
                 }
                 BigDecimal sumAllPayedInstallments = sumOffAllRepaidTransactionsAndDate.bigDecimalAmount.subtract(repaidArrears);
 
                 if (dueAmount.compareTo(sumAllPayedInstallments) == -1) {
+                    LOGGER.info("Start handle due amount is higher that repaid");
                     handleDueAmountHigherThatRepaid(loanToCheck, sumOffAllRepaidTransactionsAndDate, dueAmount);
                 }
                 if (dueAmount.compareTo(sumAllPayedInstallments) == 0) {
-                    handleDueAmountEqualToRepayment(allPaymentsForLoanList);
+                    LOGGER.info("Start handle due amount is equal to repayment");
+                    handleDueAmountEqualToRepayment(loanToCheck, allPaymentsForLoanList);
                 }
                 if (dueAmount.compareTo(sumAllPayedInstallments) == 1) {
+                    LOGGER.info("Start handle due amount is lower that repaid");
                     handleDueAmountLowerThatRepaid(loanToCheck, allPaymentsForLoanList, sumOffAllRepaidTransactionsAndDate, dueAmount);
                 }
             }
         }
     }
 
-    public void handleDueAmountEqualToRepayment(List<LoanCashFlowDto> allPaymentsForLoanList) {
-        LOGGER.info("There are not outstandings amount or overpayments.");
-        List<LoanCashFlowDto> temList = allPaymentsForLoanList.stream()
-                .filter(i -> i.getPostingsTimeStamp() == null)
-                .collect(Collectors.toList());
-        for (LoanCashFlowDto payment : temList) {
-            payment.setPostingsTimeStamp(LocalDateTime.now());
-            payment.setPostingsAsInstalment(payment.getRepaymentAmount());
-            loansInstalmentsController.updatePayment(payment);
-        }
+    public void handleDueAmountEqualToRepayment(Loans loan, List<LoanCashFlowDto> allPaymentsForLoanList) throws LoanNotFoundException {
+        LOGGER.info("There aren't outstandings/overpayments amount.");
+        handleRepaymentsPostings(loan, allPaymentsForLoanList);
     }
 
     public void handleDueAmountHigherThatRepaid(Loans loanToCheck, LoanAmountAndDataDTO repaidAmountAndDate, BigDecimal dueAmount) throws LoanNotFoundException {
@@ -109,26 +105,34 @@ public class LoanArrearsService {
         LOGGER.info("Loan has arrears, change flag HasArrears to true.");
         LOGGER.info("Loan has arrears, setPenaltyInterestAmount: " + outstandingAmountOnLoan);
         loansController.updateLoan(loansMapper.matToLoanDto(loanToCheck));
+        handleRepaymentsPostings(loanToCheck, allPaymentsForLoanList);
+    }
 
-        List<LoanCashFlowDto> tempListPaymentsNotPosted = allPaymentsForLoanList.stream()
+    public void handleRepaymentsPostings(Loans loans, List<LoanCashFlowDto> repaymentsList) throws LoanNotFoundException {
+        LOGGER.info("Start method 'handleIfHasArrears'.... ");
+        List<LoanCashFlowDto> tempListNotPostedPayments = repaymentsList.stream()
                 .filter(i -> i.getPostingsTimeStamp() == null)
                 .collect(Collectors.toList());
-
-        for (LoanCashFlowDto payment : tempListPaymentsNotPosted) {
-            payment.setPostingsTimeStamp(LocalDateTime.now());
-            BigDecimal tmpArrears = loansController.getLoanById(payment.getLoansId()).getPenaltyInterestAmount();
+        for (LoanCashFlowDto payment : tempListNotPostedPayments) {
+            BigDecimal tmpArrears;
+            if (loans.getPenaltyInterestAmount() == null) {
+                tmpArrears = BigDecimal.ZERO;
+            } else {
+                tmpArrears = loansController.getLoanById(payment.getLoansId()).getPenaltyInterestAmount();
+            }
             if (payment.getRepaymentAmount().compareTo(tmpArrears) >= 0) {
                 payment.setPostingsAsArrears(tmpArrears);
                 payment.setPostingsAsInstalment(payment.getRepaymentAmount().subtract(tmpArrears));
-                payment.setPostingsTimeStamp(LocalDateTime.now());
-                loanToCheck.setPenaltyInterestAmount(BigDecimal.ZERO);
+                loans.setPenaltyInterestAmount(BigDecimal.ZERO);
+                loans.setHasArrears(false);
             } else {
                 payment.setPostingsAsArrears(payment.getRepaymentAmount());
-                payment.setPostingsTimeStamp(LocalDateTime.now());
-                loanToCheck.setPenaltyInterestAmount(tmpArrears.subtract(payment.getRepaymentAmount()));
+                loans.setPenaltyInterestAmount(tmpArrears.subtract(payment.getRepaymentAmount()));
             }
+            payment.setPostingsTimeStamp(LocalDateTime.now());
             loansInstalmentsController.updatePayment(payment);
-            loansController.updateLoan(loansMapper.matToLoanDto(loanToCheck));
+            loansController.updateLoan(loansMapper.matToLoanDto(loans));
+            LOGGER.info("Repayment ID: " + payment.getTransactionId() + " has been posted on loan.");
         }
     }
 }

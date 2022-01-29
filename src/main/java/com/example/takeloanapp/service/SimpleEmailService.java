@@ -52,7 +52,6 @@ public class SimpleEmailService {
         Optional.ofNullable(mail.getToCc())
                 .ifPresent(isCc -> notificationHistory.setNotificatinCcReceiver(mail.getToCc()));
         notificationService.saveNotification(notificationHistory);
-
         LOGGER.info("processing mail in progress....");
         return mailMessage;
     }

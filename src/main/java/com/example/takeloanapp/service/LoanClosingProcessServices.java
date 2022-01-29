@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,11 +24,11 @@ public class LoanClosingProcessServices {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoanClosingProcessServices.class);
 
     @Autowired
-    LoansController loansController;
+    private LoansController loansController;
     @Autowired
-    LoanArrearsService loanArrearsService;
+    private LoanArrearsService loanArrearsService;
     @Autowired
-    LoansMapper loansMapper;
+    private LoansMapper loansMapper;
     @Autowired
     private LoansInstalmentsController loansInstalmentsController;
     @Autowired
@@ -49,27 +50,40 @@ public class LoanClosingProcessServices {
                 Loans tmpLoan = loansMapper.mapToLoan(checkedLoan);
                 BigDecimal dueAmount = arrearsCalculator.checkInstallmentsDue(tmpLoan);
                 BigDecimal sumOfAllPayments = arrearsCalculator.sumAmountOfPayedInstallments(loansInstalmentsController.loanRepaymentByLoanId(tmpLoan.getId())).getBigDecimalAmount();
-                if (sumOfAllPayments.compareTo(dueAmount) == 0 && !tmpLoan.isHasArrears()) {
-                    LOGGER.info("sum ar all done payment is equal to due amount");
+                BigDecimal sumofAllPayedArrears = arrearsCalculator.sumOfArrears(loansInstalmentsController.loanRepaymentByLoanId(tmpLoan.getId()));
+                BigDecimal sumOfAllPayedInstallments = sumOfAllPayments.subtract(sumofAllPayedArrears).setScale(2, RoundingMode.HALF_UP);
+                if (sumOfAllPayedInstallments.compareTo(dueAmount) == 0 && !tmpLoan.isHasArrears()) {
+                    LOGGER.info("Sum of all done payment is equal to due amount");
                     doLoanClose(tmpLoan);
                     mailContentTemplates.sendCustomerMailAboutClosedLoan(tmpLoan.getCustomer().getMailAddress());
                 }
-                if (sumOfAllPayments.compareTo(dueAmount) == -1) {
+                if (sumOfAllPayedInstallments.compareTo(dueAmount) == -1) {
                     LOGGER.info("sum ar all done payment is smaller that due amount. we can not close loan id: " + tmpLoan.getId());
+                    String loanInfo = loanInformationToString(tmpLoan, dueAmount, sumOfAllPayedInstallments);
+                    mailContentTemplates.sentInformationAboutOutstandingsAmountOnClosedLoan(loanInfo);
                 }
-                if (sumOfAllPayments.compareTo(dueAmount) == 1) {
+                if (sumOfAllPayedInstallments.compareTo(dueAmount) == 1) {
                     LOGGER.info("sum of all done payment is higher that due amount.");
-                    String loanInfo = "loan id: " + tmpLoan.getId() + ", due amount: " + dueAmount + ", sum of all payments: " + sumOfAllPayments;
+                    String loanInfo = loanInformationToString(tmpLoan, dueAmount, sumOfAllPayedInstallments);
                     mailContentTemplates.sentInformationAboutOverpaymentOnClosedLoan(loanInfo);
+                    mailContentTemplates.sendCustomerMailAboutClosedLoan(tmpLoan.getCustomer().getMailAddress());
                 }
             }
         }
     }
 
-    public void doLoanClose(Loans loansToBeclose) throws LoanNotFoundException {
-        LOGGER.info("Starting closing loan ID: " + loansToBeclose.getId());
-        loansToBeclose.setClosed(true);
-        loansController.updateLoan(loansMapper.matToLoanDto(loansToBeclose));
-        LOGGER.info("Flag CLOSED has been set for loan ID: " + loansToBeclose.getId());
+    public void doLoanClose(Loans loansToBeClose) throws LoanNotFoundException {
+        LOGGER.info("Starting closing loan ID: " + loansToBeClose.getId());
+        loansToBeClose.setClosed(true);
+        loansController.updateLoan(loansMapper.matToLoanDto(loansToBeClose));
+        LOGGER.info("Flag CLOSED has been set for loan ID: " + loansToBeClose.getId());
+    }
+
+    public String loanInformationToString(Loans loans, BigDecimal dueAmount, BigDecimal allPayedInstalments){
+        String loanInfo = "loan id: " + loans.getId() +
+                "\n\t- due amount: " + dueAmount +
+                "\n\t- sum of all payments: " + allPayedInstalments + ".";
+        if(loans.isHasArrears()) loanInfo = loanInfo + "\n\t- arrears sum is: " + loans.getPenaltyInterestAmount();
+        return loanInfo;
     }
 }
