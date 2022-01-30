@@ -32,6 +32,20 @@ public class LoanApplicationsList {
     public LoanApplicationsList() {
     }
 
+    public LoanApplicationsList(Customer customer, String employmentForm, BigDecimal incomeAmount, String employerName, String employerNipNumber, String employerAddress, String employerPhoneNumber, BigDecimal otherLiabilities, BigDecimal loanAmount, int repaymentPeriodInMonth, String accountNumberForPaymentOfLoan) {
+        this.customer = customer;
+        this.employmentForm = employmentForm;
+        this.incomeAmount = incomeAmount;
+        this.employerName = employerName;
+        this.employerNipNumber = employerNipNumber;
+        this.employerAddress = employerAddress;
+        this.employerPhoneNumber = employerPhoneNumber;
+        this.otherLiabilities = otherLiabilities;
+        this.loanAmount = loanAmount;
+        this.repaymentPeriodInMonth = repaymentPeriodInMonth;
+        this.accountNumberForPaymentOfLoan = accountNumberForPaymentOfLoan;
+    }
+
     public LoanApplicationsList(Long id, Customer customer, Loans loans, String employmentForm, BigDecimal incomeAmount, String employerName, String employerNipNumber, String employerAddress, String employerPhoneNumber, BigDecimal otherLiabilities, BigDecimal loanAmount, int repaymentPeriodInMonth, boolean isApplicationAccepted, LocalDate dateOfRegistrationOfApplication, LocalDate dataOfClosedOfApplication, String accountNumberForPaymentOfLoan, boolean isPayoutsDone, LocalDate dateOfPayout, boolean isClosed) {
         this.id = id;
         this.customer = customer;

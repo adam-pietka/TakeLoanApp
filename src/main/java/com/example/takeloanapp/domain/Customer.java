@@ -31,7 +31,18 @@ public class Customer {
 
     public Customer() {}
 
-    public Customer(String name, String surname, String s, String street, String s1, String s2, String city, String s3, String passport, String aa858585, String mail){
+    public Customer(String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String idType, String idNumber, String mailAddress) {
+        this.name = name;
+        this.surname = surname;
+        this.phoneNumber = phoneNumber;
+        this.addressStreet = addressStreet;
+        this.addressNumber = addressNumber;
+        this.addressPostCode = addressPostCode;
+        this.addressCity = addressCity;
+        this.peselNumber = peselNumber;
+        this.idType = idType;
+        this.idNumber = idNumber;
+        this.mailAddress = mailAddress;
     }
 
     public Customer(Long id, String name, String surname, String phoneNumber, String addressStreet, String addressNumber, String addressPostCode, String addressCity, String peselNumber, String nipNumber, String idType, String idNumber, String mailAddress, boolean isActive, LocalDate registrationDate, LocalDate closedDate, List<Loans> loansList, List<LoanApplicationsList> loanApplicationsLists) {

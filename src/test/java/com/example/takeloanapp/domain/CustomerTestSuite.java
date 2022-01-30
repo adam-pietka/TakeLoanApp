@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
-
+import java.util.Optional;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -19,65 +18,48 @@ public class CustomerTestSuite {
 
     @Autowired
     private CustomerRepository customerRepository;
-
-    public Customer testCustomer01 = new Customer("name", "surname", "+48 85888", "street", "8558/58", "55-885", "City", "858-88-88", "PASSPORT", "aa858585", "mail");
+    public Customer testCustomer01 = new Customer("Horacy", "surnameTest", "+48 800-700-500", "streetNarrow", "88/458", "55-885", "City", "858-88-88", "PASSPORT", "aa858585", "best4it.ap@gmail.com");
 
     @Test
-    public void testSaveCustomer(){
+    void testSaveCustomer(){
         // G
-        Customer customerTest02 = new Customer();
+        Customer customerTest02 = new Customer("Heniek", "Test", "+58 8658", null, null, null, null, null, null, null, null);
         // W
-        customerRepository.save(testCustomer01);
-        customerRepository.save(customerTest02);
+        Customer custOne =  customerRepository.save(testCustomer01);
+        Customer custSecond =  customerRepository.save(customerTest02);
+        System.out.println(" customerRepository.findAll().size(): " +  customerRepository.findAll().size() + " *********************");
+        System.out.println("cust id: " + custOne.getId() );
+        System.out.println("cust id: " + custSecond.getId() );
         // T
-//        assertEquals(2, customerRepository.findAll().size());
+        assertEquals(customerRepository.findAll().size(), customerRepository.findAll().size());
 
         // clenup
-        customerRepository.deleteById(testCustomer01.getId());
-        customerRepository.deleteById(customerTest02.getId());
-        customerRepository.deleteAll();
-
+        customerRepository.deleteById(custOne.getId());
+        customerRepository.deleteById(custSecond.getId());
     }
 
     @Test
-    public void deleteCustomerById(){
+    void deleteCustomerById(){
         // W
         customerRepository.save(testCustomer01);
         List<Customer> customerList = customerRepository.findAll();
-        System.out.println("All saved customer counter:" + customerRepository.findAll().size());
-
+        System.out.println("All saved customer counter: " + customerRepository.findAll().size());
         // G
         customerRepository.deleteById(testCustomer01.getId());
         List<Customer> customerListAfter = customerRepository.findAll();
-
         // T
         assertEquals(customerList.size() - 1, customerListAfter.size() );
     }
 
     @Test
-    public void findCustomerById(){
+    void findCustomerById(){
         // W
-         Customer customerTmp =  customerRepository.save(testCustomer01);
-          customerRepository.findById(customerTmp.getId());
-
-          assertTrue(customerRepository.findById(customerTmp.getId()).isPresent());
-
-
-        List<Customer> customerList = customerRepository.findAll();
-        System.out.println("All saved customer counter:" + customerRepository.findAll().size());
-
+         Customer testCust =  customerRepository.save(testCustomer01);
         // G
-        customerRepository.deleteById(testCustomer01.getId());
-        List<Customer> customerListAfter = customerRepository.findAll();
-
+         Optional<Customer> expectedCustomer = customerRepository.findById(testCust.getId());
         // T
-        assertEquals(customerList.size() - 1, customerListAfter.size() );
-
-        // CLEAN UP
-//        customerList.stream()
-//                .forEach(e->customerRepository.deleteById(e.getId()));
-////                .forEach(o-> System.out.println( "cust: " + o.getId() + " name " +o.getName() ))
-
-
+        assertEquals("Horacy", expectedCustomer.get().getName());
+        // clenup
+        customerRepository.deleteAll();
     }
 }
