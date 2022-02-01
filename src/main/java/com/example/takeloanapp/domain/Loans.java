@@ -38,6 +38,12 @@ public class Loans {
     public Loans() {
     }
 
+    public Loans(int periodInMonth, int dayOfInstalmentRepayment, BigDecimal loanAmount) {
+        this.periodInMonth = periodInMonth;
+        this.dayOfInstalmentRepayment = dayOfInstalmentRepayment;
+        this.loanAmount = loanAmount;
+    }
+
     public Loans(Long id, String productName, int periodInMonth, LocalDate startDate, LocalDate endDate, int dayOfInstalmentRepayment, BigDecimal loanAmount, BigDecimal loanRate, BigDecimal loanTotalInterest, BigDecimal nextInstalmentInterestRepayment, BigDecimal nextInstalmentCapitalRepayment, BigDecimal payedInterests, BigDecimal payedCapital, boolean isActive, LocalDate registrationDate, boolean hasArrears, int counterDaysArrears, BigDecimal penaltyInterest, BigDecimal penaltyInterestAmount, Customer customer, String loanAccountNumber, boolean isClosed, List<LoanCashFlow> loanCashFlows) {
         this.id = id;
         this.productName = productName;

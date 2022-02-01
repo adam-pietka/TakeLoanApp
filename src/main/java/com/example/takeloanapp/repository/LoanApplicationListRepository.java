@@ -23,5 +23,4 @@ public interface LoanApplicationListRepository extends CrudRepository<LoanApplic
     List<LoanApplicationsList> findAll();
 
     void deleteById(Long id);
-
 }
