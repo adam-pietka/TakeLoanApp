@@ -23,4 +23,6 @@ public interface LoanRepository extends CrudRepository<Loans, Long> {
 
     void deleteById(Long id);
 
+    @Override
+    void deleteAll();
 }
