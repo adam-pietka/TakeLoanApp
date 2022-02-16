@@ -105,7 +105,7 @@ public class LoanApplicationListService {
 
     public Loans startPreparingSimulation(LoanApplicationsList loanAppl){
         LOGGER.info("Loan application has been accepted, starting prepare SIMULATION for LOAN");
-        BigDecimal monthlyInterestRate = loanCalculator.calculateMonthlyInterestRate(loanAppl);
+        BigDecimal monthlyInterestRate = loanCalculator.calculateMonthlyInterestRate();
         BigDecimal monthlyPayment =  loanCalculator.monthlyInstalment(loanAppl, monthlyInterestRate);
         BigDecimal totalLoanAmount = loanCalculator.totalLoanPayments(loanAppl, monthlyPayment);
 

@@ -19,7 +19,7 @@ public class LoanCalculator {
     private static final BigDecimal ANNUAL_INTEREST_RATE = new BigDecimal("0.1980");
     private static final String LOAN_PRODUCT_NAME = "Summer Promotion 2021.";
 
-    public BigDecimal calculateMonthlyInterestRate(LoanApplicationsList loansAppList){
+    public BigDecimal calculateMonthlyInterestRate(){
         LOGGER.info("Starting calculating monthly interest rate for application.");
         BigDecimal monthlyInterestRate = ANNUAL_INTEREST_RATE.divide(new BigDecimal("12")).setScale(6,RoundingMode.HALF_UP);
         LOGGER.info("End of calculating monthly interest rate - is equal: '" + monthlyInterestRate + "' .");

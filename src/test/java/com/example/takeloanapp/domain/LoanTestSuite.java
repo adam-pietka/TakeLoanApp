@@ -75,6 +75,16 @@ public class LoanTestSuite {
 
     @Test
     void removeLoanTest(){
+        // G W
+        Loans loanToRemove = loanRepo.save(loanTestOne);
+        List<Loans> loansList = loanRepo.findAll();
 
+        loanRepo.deleteById(loanToRemove.getId());
+        List<Loans> loansListAfter = loanRepo.findAll();
+        // T
+        System.out.println( "before: " + loansList.size());
+        System.out.println( "After: " + loansListAfter.size());
+
+        assertEquals(loansList.size() - 1, loansListAfter.size());
     }
 }
