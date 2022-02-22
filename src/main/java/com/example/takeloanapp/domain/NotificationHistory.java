@@ -18,6 +18,14 @@ public class NotificationHistory {
     public NotificationHistory() {
     }
 
+    public NotificationHistory(LocalDateTime sendTimeStamp, String notyficationReceiver, String notificationSubject, String notificationContent, String notificatinCcReceiver) {
+        this.sendTimeStamp = sendTimeStamp;
+        this.notyficationReceiver = notyficationReceiver;
+        this.notificationSubject = notificationSubject;
+        this.notificationContent = notificationContent;
+        this.notificatinCcReceiver = notificatinCcReceiver;
+    }
+
     public NotificationHistory(Long notificationId, LocalDateTime sendTimeStamp, String notyficationReceiver, String notificationSubject, String notificationContent, String notificatinCcReceiver) {
         this.notificationId = notificationId;
         this.sendTimeStamp = sendTimeStamp;
